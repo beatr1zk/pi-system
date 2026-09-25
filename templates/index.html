@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beatriz Kava | Designer Gráfica</title>
+</head>
+<body>
+    <header>
+        <a href="#inicio" aria-label="Bealz, início">Bealz</a>
+        <nav aria-label="Navegação principal">
+            <ul>
+                <li><a href="#inicio">Home</a></li>
+                <li><a href="#sobre">Quem sou</a></li>
+                <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+        <a href="#contato">Vamos conversar</a>
+    </header>
+
+    <main>
+        <section id="inicio" aria-labelledby="titulo-inicio">
+            <p>Portfólio</p>
+            <h1 id="titulo-inicio">Beatriz Kava</h1>
+            <p>Designer gráfica</p>
+            <p>Ideias, formas e histórias ganham vida por meio do design.</p>
+        </section>
+
+        <section id="sobre" aria-labelledby="titulo-sobre">
+            <h2 id="titulo-sobre">Quem sou</h2>
+            <figure>
+                <img src="{{ url_for('static', filename='img/beatriz-kava.jpg') }}" alt="Fotografia de Beatriz Kava">
+                <figcaption>Beatriz Kava, designer gráfica.</figcaption>
+            </figure>
+            <p>Um pouco sobre mim e sobre como transformo ideias em soluções visuais.</p>
+
+            <section aria-labelledby="titulo-formacao">
+                <h3 id="titulo-formacao">Estudos</h3>
+                <p>Formação e estudos em design gráfico: informações em atualização.</p>
+            </section>
+
+            <section aria-labelledby="titulo-experiencia">
+                <h3 id="titulo-experiencia">Experiências</h3>
+                <p>Experiências profissionais: informações em atualização.</p>
+            </section>
+
+            <section aria-labelledby="titulo-habilidades">
+                <h3 id="titulo-habilidades">Habilidades</h3>
+                <ul>
+                    <li>Identidade visual</li>
+                    <li>Design gráfico</li>
+                    <li>Design para mídias digitais</li>
+                    <li>UI/UX Design</li>
+                </ul>
+            </section>
+        </section>
+
+        <section id="projetos" aria-labelledby="titulo-projetos">
+            <h2 id="titulo-projetos">Projetos selecionados</h2>
+            <p>Uma seleção de trabalhos e experimentações visuais.</p>
+            <div>
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-01.jpg') }}" alt="Imagem do projeto 1">
+                        <figcaption>
+                            <h3>Projeto 1</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-02.jpg') }}" alt="Imagem do projeto 2">
+                        <figcaption>
+                            <h3>Projeto 2</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-03.jpg') }}" alt="Imagem do projeto 3">
+                        <figcaption>
+                            <h3>Projeto 3</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-04.jpg') }}" alt="Imagem do projeto 4">
+                        <figcaption>
+                            <h3>Projeto 4</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-05.jpg') }}" alt="Imagem do projeto 5">
+                        <figcaption>
+                            <h3>Projeto 5</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+
+                <article>
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/projeto-06.jpg') }}" alt="Imagem do projeto 6">
+                        <figcaption>
+                            <h3>Projeto 6</h3>
+                            <p>Descrição provisória do projeto.</p>
+                        </figcaption>
+                    </figure>
+                </article>
+            </div>
+        </section>
+
+        <section id="contato" aria-labelledby="titulo-contato">
+            <h2 id="titulo-contato">Vamos conversar?</h2>
+            <p>Vamos fazer boas ideias funcionarem para clientes e contratantes.</p>
+            <form method="post">
+                <p>
+                    <label for="nome">Nome</label>
+                    <input id="nome" name="nome" type="text" autocomplete="name">
+                </p>
+                <p>
+                    <label for="email">E-mail</label>
+                    <input id="email" name="email" type="email" autocomplete="email">
+                </p>
+                <p>
+                    <label for="telefone">Telefone (opcional)</label>
+                    <input id="telefone" name="telefone" type="tel" autocomplete="tel">
+                </p>
+                <p>
+                    <label for="servico">Serviço de interesse</label>
+                    <input id="servico" name="servico" type="text">
+                </p>
+                <p>
+                    <label for="mensagem">Mensagem</label>
+                    <textarea id="mensagem" name="mensagem" rows="5"></textarea>
+                </p>
+                <button type="submit">Enviar</button>
+            </form>
+            <nav aria-label="Contato e redes profissionais">
+                <ul>
+                    <li><span>Behance: x</span></li>
+                    <li><span>LinkedIn: x</span></li>
+                    <li><span>E-mail: x</span></li>
+                </ul>
+            </nav>
+        </section>
+    </main>
+
+    <footer>
+        <a href="#inicio">LOGO</a>
+        <nav aria-label="Navegação do rodapé">
+            <ul>
+                <li><a href="#inicio">Home</a></li>
+                <li><a href="#sobre">Quem sou</a></li>
+                <li><a href="#projetos">Projetos</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+        <p>Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
