@@ -183,8 +183,8 @@ Responsável pela representação das entidades como objetos Python.
 
 Os Models podem conter:
 
--   atributos
--   `@property`
+- atributos
+- `@property`
 -   setters
 -   métodos próprios da entidade
 -   regras simples diretamente relacionadas ao objeto
@@ -287,7 +287,7 @@ ordenadas.
 
 Antes de implementar qualquer funcionalidade:
 
--   consolidar requisitos;
+- consolidar requisitos;
 -   confirmar entidades;
 -   confirmar relacionamentos;
 -   confirmar rotas;
