@@ -1,0 +1,25 @@
+<section class="secao-contato" id="contato" aria-labelledby="titulo-contato">
+    <header class="cabecalho-secao">
+        <p class="rotulo-secao">CONTATO</p>
+        <h2 id="titulo-contato">Vamos conversar?</h2>
+        <p>Tem um projeto em mente ou procura uma designer para sua equipe? Entre em contato e vamos conversar sobre a sua ideia.</p>
+    </header>
+
+    <form class="formulario-contato" action="" method="POST">
+        <fieldset>
+            <legend>Envie uma mensagem</legend>
+            <p class="campo-formulario"><label for="nome">Nome</label><input type="text" id="nome" name="nome" autocomplete="name" required></p>
+            <p class="campo-formulario"><label for="email">E-mail</label><input type="email" id="email" name="email" autocomplete="email" required></p>
+            <p class="campo-formulario"><label for="telefone">Telefone <span>(opcional)</span></label><input type="tel" id="telefone" name="telefone" autocomplete="tel"></p>
+            <p class="campo-formulario"><label for="servico">Serviço</label><select id="servico" name="servico" required><option value="" selected disabled>Selecione um serviço</option><option value="identidade-visual">Identidade Visual</option><option value="design-grafico">Design Gráfico</option><option value="ui-ux">UI/UX</option><option value="desenvolvimento-web">Desenvolvimento Web</option><option value="outro">Outro</option></select></p>
+            <p class="campo-formulario campo-mensagem"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" rows="6" required></textarea></p>
+            <button class="botao" type="submit">Enviar</button>
+        </fieldset>
+    </form>
+
+    <nav class="redes-contato" aria-label="Outras formas de contato">
+        <a href="#" target="_blank" rel="noopener noreferrer">Behance</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="mailto:email@exemplo.com">E-mail</a>
+    </nav>
+</section>

@@ -1,5 +1,5 @@
 from flask import Flask
-# from routes.cliente_routes import cliente_bp
+from routes.cliente_routes import cliente_bp
 from repositories import rep_status_clientes
 from repositories import rep_status_leads
 from repositories import rep_status_projetos
@@ -24,7 +24,7 @@ def inicializar_banco():
     rep_projetos.criar_tabela_projetos()
 
 
-# app.register_blueprint(cliente_bp)
+app.register_blueprint(cliente_bp)
 
 
 if __name__ == "__main__":

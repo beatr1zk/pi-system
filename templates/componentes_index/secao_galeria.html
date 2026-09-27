@@ -1,0 +1,22 @@
+<section class="secao-galeria" id="projetos" aria-labelledby="titulo-projetos">
+    <header class="cabecalho-secao">
+        <p class="rotulo-secao">PORTFÓLIO</p>
+        <h2 id="titulo-projetos">Projetos</h2>
+    </header>
+
+    <section class="grade-projetos" aria-label="Galeria de projetos">
+        {% for numero in range(1, 6) %}
+        <figure class="projeto {% if numero == 1 %}projeto-destaque{% elif numero == 2 %}projeto-secundario{% elif numero == 3 %}projeto-terciario{% elif numero == 4 %}projeto-quaternario{% else %}projeto-quinto{% endif %}">
+            <img src="{{ url_for('static', filename='img/projeto-0' ~ numero ~ '.jpg') }}" alt="Projeto {{ numero }} do portfólio">
+            {% if numero == 1 %}
+            <figcaption class="informacoes-projeto">
+                <h3>Projeto de destaque</h3>
+                <p>Lorem ipsum dolor sit amet.</p>
+            </figcaption>
+            {% else %}
+            <figcaption class="texto-oculto">Projeto {{ numero }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endfor %}
+    </section>
+</section>

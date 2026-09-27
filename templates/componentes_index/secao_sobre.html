@@ -1,0 +1,26 @@
+<section class="secao-sobre" id="sobre" aria-labelledby="titulo-sobre">
+    <header class="cabecalho-secao">
+        <p class="rotulo-secao">SOBRE</p>
+        <h2 id="titulo-sobre">Quem sou eu</h2>
+    </header>
+
+    <article class="apresentacao">
+        <figure class="foto-perfil">
+            <img src="{{ url_for('static', filename='img/foto-perfil.jpg') }}" alt="Foto de Beatriz Kava">
+        </figure>
+
+        <div class="texto-sobre">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo nec libero sollicitudin tincidunt. Praesent sed erat vitae lectus consectetur tincidunt.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tincidunt, massa a feugiat fermentum, justo neque volutpat nisi, vitae consequat lorem erat sed nisl.</p>
+        </div>
+    </article>
+
+    <section class="experiencias" aria-labelledby="titulo-experiencias">
+        <h3 id="titulo-experiencias">Experiências</h3>
+        <ul class="lista-experiencias">
+            <li class="experiencia"><span>Lorem ipsum</span><span class="nivel-experiencia" aria-label="4 de 5"><span aria-hidden="true">●●●●○</span></span></li>
+            <li class="experiencia"><span>Lorem ipsum</span><span class="nivel-experiencia" aria-label="4 de 5"><span aria-hidden="true">●●●●○</span></span></li>
+            <li class="experiencia"><span>Lorem ipsum</span><span class="nivel-experiencia" aria-label="3 de 5"><span aria-hidden="true">●●●○○</span></span></li>
+        </ul>
+    </section>
+</section>
