@@ -1,6 +1,4 @@
-/* =========================================
-   CABEÇALHO
-   ========================================= */
+/* CABEÇALHO */
 
 .cabecalho {
     display: grid;
@@ -19,9 +17,7 @@
 
 .logo {
     width: 7rem;
-    height: 2.5rem;
-    border: 1px solid var(--cor-borda);
-    background-color: var(--cor-superficie);
+    height: 4.5rem;
     object-fit: contain;
 }
 
