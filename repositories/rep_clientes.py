@@ -4,7 +4,6 @@ from models.cliente import Cliente
 def criar_tabela_clientes():
     conexao = conectar()
     cursor = conexao.cursor()
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS clientes(
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,7 +18,7 @@ def criar_tabela_clientes():
             data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
             ON UPDATE CURRENT_TIMESTAMP,
             status_id INT,
-            
+
             FOREIGN KEY (status_id) REFERENCES status_clientes(id)
         )"""
     )
@@ -32,12 +31,22 @@ def criar_cliente(cliente):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        INSERT INTO clientes(nome, email, telefone, cpf, servico, detalhes, url_proposta, status_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", 
-        (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, 
-        cliente.url_proposta, cliente.status_id
-    ))
+        INSERT INTO clientes(
+            nome,
+            email,
+            telefone,
+            cpf,
+            servico,
+            detalhes,
+            url_proposta,
+            status_id
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.url_proposta, cliente.status_id)
+    )
+
     conexao.commit()
+
     cliente.id = cursor.lastrowid
 
     cursor.close()
@@ -52,6 +61,7 @@ def listar_clientes():
                url_proposta, data_cadastro, data_atualizacao, status_id
         FROM clientes
     """)
+
     resultado = cursor.fetchall()
 
     cursor.close()
@@ -74,7 +84,8 @@ def buscar_por_id(id_cliente):
                url_proposta, data_cadastro, data_atualizacao, status_id
         FROM clientes
         WHERE id = %s
-    """, (id_cliente,))
+    """, (id_cliente,)
+    )
     resultado = cursor.fetchone()
 
     cursor.close()
@@ -94,13 +105,14 @@ def pesquisar_clientes(termo):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        SELECT id, nome, email, telefone, cpf, servico, detalhes, url_proposta, data_cadastro, data_atualizacao, status_id
-        FROM clientes WHERE nome LIKE %s
+        SELECT id, nome, email, telefone, cpf, servico, detalhes,
+               url_proposta, data_cadastro, data_atualizacao, status_id
+        FROM clientes
+        WHERE nome LIKE %s
            OR email LIKE %s
            OR telefone LIKE %s
            OR cpf LIKE %s
-    """, 
-    (f"%{termo}%", f"%{termo}%", f"%{termo}%", f"%{termo}%")
+    """, (f"%{termo}%", f"%{termo}%", f"%{termo}%", f"%{termo}%")
     )
     resultado = cursor.fetchall()
 
@@ -108,6 +120,7 @@ def pesquisar_clientes(termo):
     conexao.close()
 
     clientes = []
+
     for id_cliente, nome, email, telefone, cpf, servico, detalhes, url_proposta, data_cadastro, data_atualizacao, status_id in resultado:
         cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, url_proposta, status_id)
         cliente.id = id_cliente
@@ -116,8 +129,36 @@ def pesquisar_clientes(termo):
         clientes.append(cliente)
     return clientes
 
-# def atualizar_cliente(cliente):
-#     ...
+def atualizar_cliente(cliente):
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute("""
+        UPDATE clientes
+        SET nome = %s,
+            email = %s,
+            telefone = %s,
+            cpf = %s,
+            servico = %s,
+            detalhes = %s,
+            url_proposta = %s,
+            status_id = %s
+        WHERE id = %s
+    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.url_proposta, cliente.status_id, cliente.id)
+    )
+    conexao.commit()
 
-# def excluir_cliente(id_cliente):
-#     ...
+    cursor.close()
+    conexao.close()
+
+def excluir_cliente(id_cliente):
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute("""
+        DELETE FROM clientes
+        WHERE id = %s
+    """, (id_cliente,))
+    
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()

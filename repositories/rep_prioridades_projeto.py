@@ -1,80 +1,76 @@
 from banco.db import conectar
-from models.status_cliente import StatusCliente
+from models.prioridade_projeto import PrioridadeProjeto
 
-def criar_tabela_status_clientes():
+def criar_tabela_prioridades_projeto():
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS status_clientes(
+        CREATE TABLE IF NOT EXISTS prioridades_projeto(
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome VARCHAR(50) NOT NULL UNIQUE
         )"""
     )
-
     conexao.commit()
     cursor.close()
     conexao.close()
 
-def criar_status_cliente(status):
+def criar_prioridade_projeto(prioridade):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        INSERT INTO status_clientes(nome)
+        INSERT INTO prioridades_projeto(nome)
         VALUES (%s)
-    """, (status.nome,)
+    """, (prioridade.nome,)
     )
     conexao.commit()
 
-    status.id = cursor.lastrowid
+    prioridade.id = cursor.lastrowid
 
     cursor.close()
     conexao.close()
-    return status
+    return prioridade
 
-def listar_status_clientes():
+def listar_prioridades_projeto():
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, nome
-        FROM status_clientes
+        FROM prioridades_projeto
     """)
     resultado = cursor.fetchall()
 
     cursor.close()
     conexao.close()
 
-    status_clientes = []
+    prioridades = []
+    for id_prioridade, nome in resultado:
+        prioridade = PrioridadeProjeto(nome)
+        prioridade.id = id_prioridade
+        prioridades.append(prioridade)
+    return prioridades
 
-    for id_status, nome in resultado:
-        status = StatusCliente(nome)
-        status.id = id_status
-        status_clientes.append(status)
-    return status_clientes
-
-def atualizar_status_cliente(status):
+def atualizar_prioridade_projeto(prioridade):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        UPDATE status_clientes
+        UPDATE prioridades_projeto
         SET nome = %s
         WHERE id = %s
-    """, (status.nome, status.id)
+    """, (prioridade.nome, prioridade.id)
     )
-
     conexao.commit()
 
     cursor.close()
     conexao.close()
 
-def excluir_status_cliente(id_status):
+def excluir_prioridade_projeto(id_prioridade):
     conexao = conectar()
     cursor = conexao.cursor()
-
     cursor.execute("""
-        DELETE FROM status_clientes
+        DELETE FROM prioridades_projeto
         WHERE id = %s
-    """, (id_status,))
-
+    """, (id_prioridade,)
+    )
     conexao.commit()
 
     cursor.close()

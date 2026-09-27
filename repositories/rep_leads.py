@@ -4,7 +4,6 @@ from models.lead import Lead
 def criar_tabela_leads():
     conexao = conectar()
     cursor = conexao.cursor()
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS leads(
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,7 +35,6 @@ def criar_lead(lead):
         VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, (lead.nome, lead.email, lead.telefone, lead.servico, lead.mensagem, lead.status_id, lead.cliente_id
     ))
-
     conexao.commit()
 
     lead.id = cursor.lastrowid
@@ -52,7 +50,6 @@ def listar_leads():
         SELECT id, nome, email, telefone, servico, mensagem, status_id, data_cadastro, cliente_id
         FROM leads
     """)
-
     resultado = cursor.fetchall()
 
     cursor.close()
@@ -69,13 +66,12 @@ def listar_leads():
 def buscar_por_id(id_lead):
     conexao = conectar()
     cursor = conexao.cursor()
-
     cursor.execute("""
         SELECT id, nome, email, telefone, servico, mensagem,
                status_id, data_cadastro, cliente_id
         FROM leads WHERE id = %s
-    """, (id_lead,))
-
+    """, (id_lead,)
+    )
     resultado = cursor.fetchone()
 
     cursor.close()
@@ -119,8 +115,36 @@ def pesquisar_leads(termo):
 
     return leads
 
-# def atualizar_lead(lead):
-#     ...
+def atualizar_lead(lead):
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-# def excluir_lead(id_lead):
-#     ...
+    cursor.execute("""
+        UPDATE leads
+        SET nome = %s,
+            email = %s,
+            telefone = %s,
+            servico = %s,
+            mensagem = %s,
+            status_id = %s,
+            cliente_id = %s
+        WHERE id = %s
+    """, (lead.nome, lead.email, lead.telefone, lead.servico, lead.mensagem, lead.status_id, lead.cliente_id, lead.id)
+    )
+    conexao.commit()
+    cursor.close()
+    conexao.close()
+
+def excluir_lead(id_lead):
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute("""
+        DELETE FROM leads
+        WHERE id = %s
+    """, (id_lead,)
+    )
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()

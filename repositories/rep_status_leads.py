@@ -1,11 +1,12 @@
 from banco.db import conectar
-from models.status_cliente import StatusCliente
+from models.status_lead import StatusLead
 
-def criar_tabela_status_clientes():
+def criar_tabela_status_leads():
     conexao = conectar()
     cursor = conexao.cursor()
+
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS status_clientes(
+        CREATE TABLE IF NOT EXISTS status_leads(
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome VARCHAR(50) NOT NULL UNIQUE
         )"""
@@ -15,47 +16,45 @@ def criar_tabela_status_clientes():
     cursor.close()
     conexao.close()
 
-def criar_status_cliente(status):
+def criar_status_lead(status):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        INSERT INTO status_clientes(nome)
+        INSERT INTO status_leads(nome)
         VALUES (%s)
     """, (status.nome,)
     )
     conexao.commit()
-
     status.id = cursor.lastrowid
 
     cursor.close()
     conexao.close()
     return status
 
-def listar_status_clientes():
+def listar_status_leads():
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, nome
-        FROM status_clientes
+        FROM status_leads
     """)
     resultado = cursor.fetchall()
 
     cursor.close()
     conexao.close()
 
-    status_clientes = []
-
+    status_leads = []
     for id_status, nome in resultado:
-        status = StatusCliente(nome)
+        status = StatusLead(nome)
         status.id = id_status
-        status_clientes.append(status)
-    return status_clientes
+        status_leads.append(status)
+    return status_leads
 
-def atualizar_status_cliente(status):
+def atualizar_status_lead(status):
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute("""
-        UPDATE status_clientes
+        UPDATE status_leads
         SET nome = %s
         WHERE id = %s
     """, (status.nome, status.id)
@@ -66,15 +65,14 @@ def atualizar_status_cliente(status):
     cursor.close()
     conexao.close()
 
-def excluir_status_cliente(id_status):
+def excluir_status_lead(id_status):
     conexao = conectar()
     cursor = conexao.cursor()
-
     cursor.execute("""
-        DELETE FROM status_clientes
+        DELETE FROM status_leads
         WHERE id = %s
-    """, (id_status,))
-
+    """, (id_status,)
+    )
     conexao.commit()
 
     cursor.close()
