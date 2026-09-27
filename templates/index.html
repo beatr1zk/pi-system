@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Beatriz Kava | Designer Gráfico</title>
     <meta name="description" content="Portfólio de Beatriz Kava, designer gráfico.">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index/style.css') }}">
 </head>
+
 <body>
-    {% include 'components/cabecalho.html' %}
+    {% include 'componentes_index/cabecalho.html' %}
 
     <main>
-        {% include 'components/secao_hero.html' %}
-        {% include 'components/secao_sobre.html' %}
-        {% include 'components/secao_galeria.html' %}
-        {% include 'components/secao_contato.html' %}
+        {% include 'componentes_index/secao_hero.html' %}
+        {% include 'componentes_index/secao_sobre.html' %}
+        {% include 'componentes_index/secao_galeria.html' %}
+        {% include 'componentes_index/secao_contato.html' %}
     </main>
 
-    {% include 'components/rodape.html' %}
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% include 'componentes_index/rodape.html' %}
 </body>
 </html>

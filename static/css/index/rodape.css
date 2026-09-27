@@ -1,0 +1,59 @@
+/* =========================================
+   RODAPÉ
+   ========================================= */
+
+.rodape {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+    gap: var(--espacamento-grande);
+    width: min(calc(100% - 3rem), var(--largura-conteudo));
+    margin: 0 auto;
+    padding: 4rem 0 1.5rem;
+    border-top: 1px solid var(--cor-borda);
+}
+
+.coluna-rodape {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.coluna-rodape h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.links-rodape {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.links-rodape a,
+.coluna-rodape address {
+    color: var(--cor-texto-secundario);
+}
+
+.coluna-rodape address {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-style: normal;
+}
+
+.links-rodape a:hover,
+.coluna-rodape address a:hover {
+    color: var(--cor-texto);
+}
+
+.botao-administracao {
+    align-self: start;
+}
+
+.direitos-autorais {
+    grid-column: 1 / -1;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cor-borda);
+    color: var(--cor-texto-secundario);
+    font-size: 0.875rem;
+}

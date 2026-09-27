@@ -1,0 +1,45 @@
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+
+.cabecalho {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--espacamento-medio);
+    width: min(calc(100% - 3rem), var(--largura-conteudo));
+    min-height: 5rem;
+    margin: 0 auto;
+}
+
+.marca {
+    display: inline-flex;
+    align-items: center;
+}
+
+.logo {
+    width: 7rem;
+    height: 2.5rem;
+    border: 1px solid var(--cor-borda);
+    background-color: var(--cor-superficie);
+    object-fit: contain;
+}
+
+.navegacao {
+    justify-self: center;
+}
+
+.lista-navegacao {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--espacamento-medio);
+}
+
+.lista-navegacao a {
+    color: var(--cor-texto-secundario);
+}
+
+.lista-navegacao a:hover {
+    color: var(--cor-texto);
+}

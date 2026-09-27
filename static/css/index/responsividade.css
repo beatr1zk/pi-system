@@ -1,0 +1,148 @@
+/* =========================================
+   RESPONSIVIDADE
+   ========================================= */
+
+@media (max-width: 900px) {
+    .cabecalho {
+        grid-template-columns: 1fr auto;
+    }
+
+    .navegacao {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: stretch;
+    }
+
+    .cabecalho .botao-contato {
+        justify-self: end;
+    }
+
+    .apresentacao,
+    .secao-contato {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-contato,
+    .secao-contato .cabecalho-secao {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .lista-experiencias {
+        grid-template-columns: 1fr;
+    }
+
+    .rodape {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grade-projetos {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 18rem 12rem 12rem;
+    }
+
+    .projeto-destaque {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .projeto-secundario {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .projeto-terciario {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .projeto-quaternario {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .projeto-quinto {
+        grid-column: 2;
+        grid-row: 3;
+    }
+}
+
+@media (max-width: 600px) {
+    main > section {
+        padding: 4rem 0;
+    }
+
+    .cabecalho {
+        width: min(calc(100% - 2rem), var(--largura-conteudo));
+    }
+
+    .cabecalho .botao-contato {
+        display: none;
+    }
+
+    .lista-navegacao {
+        gap: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .acoes-hero {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .acoes-hero .botao {
+        width: 100%;
+    }
+
+    .apresentacao {
+        gap: 2rem;
+    }
+
+    .foto-perfil,
+    .foto-perfil img {
+        min-height: 18rem;
+    }
+
+    .grade-projetos {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, 16rem);
+    }
+
+    .projeto-destaque,
+    .projeto-secundario,
+    .projeto-terciario,
+    .projeto-quaternario,
+    .projeto-quinto {
+        grid-column: 1;
+    }
+
+    .projeto-destaque {
+        grid-row: 1;
+    }
+
+    .projeto-secundario {
+        grid-row: 2;
+    }
+
+    .projeto-terciario {
+        grid-row: 3;
+    }
+
+    .projeto-quaternario {
+        grid-row: 4;
+    }
+
+    .projeto-quinto {
+        grid-row: 5;
+    }
+
+    .rodape {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        width: min(calc(100% - 2rem), var(--largura-conteudo));
+    }
+
+    .direitos-autorais {
+        grid-column: 1;
+    }
+}

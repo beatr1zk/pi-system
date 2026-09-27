@@ -1,22 +1,168 @@
 <section class="secao-galeria" id="projetos" aria-labelledby="titulo-projetos">
+
     <header class="cabecalho-secao">
         <p class="rotulo-secao">PORTFÓLIO</p>
         <h2 id="titulo-projetos">Projetos</h2>
     </header>
 
     <section class="grade-projetos" aria-label="Galeria de projetos">
-        {% for numero in range(1, 6) %}
-        <figure class="projeto {% if numero == 1 %}projeto-destaque{% elif numero == 2 %}projeto-secundario{% elif numero == 3 %}projeto-terciario{% elif numero == 4 %}projeto-quaternario{% else %}projeto-quinto{% endif %}">
-            <img src="{{ url_for('static', filename='img/projeto-0' ~ numero ~ '.jpg') }}" alt="Projeto {{ numero }} do portfólio">
-            {% if numero == 1 %}
-            <figcaption class="informacoes-projeto">
-                <h3>Projeto de destaque</h3>
-                <p>Lorem ipsum dolor sit amet.</p>
-            </figcaption>
-            {% else %}
-            <figcaption class="texto-oculto">Projeto {{ numero }}</figcaption>
-            {% endif %}
-        </figure>
-        {% endfor %}
+        <!-- PROJETO 1 -->
+        <article class="projeto">
+            <div class="cabecalho-projeto">
+                <h3>Projeto 1</h3>
+                <p>Descrição do projeto 1.</p>
+            </div>
+
+            <div class="grade-imagens-projeto">
+                <figure class="imagem-projeto imagem-01">
+                    <img src="{{ url_for('static', filename='img/projeto-01-01.jpg') }}" alt="Projeto 1 — imagem 1">
+                </figure>
+
+                <figure class="imagem-projeto imagem-02">
+                    <img src="{{ url_for('static', filename='img/projeto-01-02.jpg') }}" alt="Projeto 1 — imagem 2">
+                </figure>
+
+                <figure class="imagem-projeto imagem-03">
+                    <img src="{{ url_for('static', filename='img/projeto-01-03.jpg') }}" alt="Projeto 1 — imagem 3">
+                </figure>
+
+                <figure class="imagem-projeto imagem-04">
+                    <img src="{{ url_for('static', filename='img/projeto-01-04.jpg') }}" alt="Projeto 1 — imagem 4">
+                </figure>
+
+                <figure class="imagem-projeto imagem-05">
+                    <img src="{{ url_for('static', filename='img/projeto-01-05.jpg') }}" alt="Projeto 1 — imagem 5">
+                </figure>
+            </div>
+
+        </article>
+
+
+        <!-- PROJETO 2 -->
+        <article class="projeto">
+
+            <div class="cabecalho-projeto">
+                <h3>Projeto 2</h3>
+                <p>Descrição do projeto 2.</p>
+            </div>
+
+            <div class="grade-imagens-projeto">
+                <figure class="imagem-projeto imagem-01">
+                    <img src="{{ url_for('static', filename='img/projeto-02-01.jpg') }}" alt="Projeto 2 — imagem 1">
+                </figure>
+
+                <figure class="imagem-projeto imagem-02">
+                    <img src="{{ url_for('static', filename='img/projeto-02-02.jpg') }}" alt="Projeto 2 — imagem 2">
+                </figure>
+
+                <figure class="imagem-projeto imagem-03">
+                    <img src="{{ url_for('static', filename='img/projeto-02-03.jpg') }}" alt="Projeto 2 — imagem 3">
+                </figure>
+
+                <figure class="imagem-projeto imagem-04">
+                    <img src="{{ url_for('static', filename='img/projeto-02-04.jpg') }}" alt="Projeto 2 — imagem 4">
+                </figure>
+
+                <figure class="imagem-projeto imagem-05">
+                    <img src="{{ url_for('static', filename='img/projeto-02-05.jpg') }}" alt="Projeto 2 — imagem 5">
+                </figure>
+            </div>
+
+        </article>
+
+
+        <!-- PROJETO 3 -->
+        <article class="projeto">
+            <div class="cabecalho-projeto">
+                <h3>Projeto 3</h3>
+                <p>Descrição do projeto 3.</p>
+            </div>
+
+            <div class="grade-imagens-projeto">
+                <figure class="imagem-projeto imagem-01">
+                    <img src="{{ url_for('static', filename='img/projeto-03-01.jpg') }}" alt="Projeto 3 — imagem 1">
+                </figure>
+
+                <figure class="imagem-projeto imagem-02">
+                    <img src="{{ url_for('static', filename='img/projeto-03-02.jpg') }}" alt="Projeto 3 — imagem 2">
+                </figure>
+
+                <figure class="imagem-projeto imagem-03">
+                    <img src="{{ url_for('static', filename='img/projeto-03-03.jpg') }}" alt="Projeto 3 — imagem 3">
+                </figure>
+
+                <figure class="imagem-projeto imagem-04">
+                    <img src="{{ url_for('static', filename='img/projeto-03-04.jpg') }}" alt="Projeto 3 — imagem 4">
+                </figure>
+
+                <figure class="imagem-projeto imagem-05">
+                    <img src="{{ url_for('static', filename='img/projeto-03-05.jpg') }}" alt="Projeto 3 — imagem 5">
+                </figure>
+
+            </div>
+        </article>
+
+
+        <!-- PROJETO 4 -->
+        <article class="projeto">
+            <div class="cabecalho-projeto">
+                <h3>Projeto 4</h3>
+                <p>Descrição do projeto 4.</p>
+            </div>
+
+            <div class="grade-imagens-projeto">
+                <figure class="imagem-projeto imagem-01">
+                    <img src="{{ url_for('static', filename='img/projeto-04-01.jpg') }}" alt="Projeto 4 — imagem 1">
+                </figure>
+
+                <figure class="imagem-projeto imagem-02">
+                    <img src="{{ url_for('static', filename='img/projeto-04-02.jpg') }}" alt="Projeto 4 — imagem 2">
+                </figure>
+
+                <figure class="imagem-projeto imagem-03">
+                    <img src="{{ url_for('static', filename='img/projeto-04-03.jpg') }}" alt="Projeto 4 — imagem 3">
+                </figure>
+
+                <figure class="imagem-projeto imagem-04">
+                    <img src="{{ url_for('static', filename='img/projeto-04-04.jpg') }}" alt="Projeto 4 — imagem 4">
+                </figure>
+
+                <figure class="imagem-projeto imagem-05">
+                    <img src="{{ url_for('static', filename='img/projeto-04-05.jpg') }}" alt="Projeto 4 — imagem 5">
+                </figure>
+            </div>
+        </article>
+
+
+        <!-- PROJETO 5 -->
+        <article class="projeto">
+            <div class="cabecalho-projeto">
+                <h3>Projeto 5</h3>
+                <p>Descrição do projeto 5.</p>
+            </div>
+
+            <div class="grade-imagens-projeto">
+                <figure class="imagem-projeto imagem-01">
+                    <img src="{{ url_for('static', filename='img/projeto-05-01.jpg') }}" alt="Projeto 5 — imagem 1">
+                </figure>
+
+                <figure class="imagem-projeto imagem-02">
+                    <img src="{{ url_for('static', filename='img/projeto-05-02.jpg') }}" alt="Projeto 5 — imagem 2">
+                </figure>
+
+                <figure class="imagem-projeto imagem-03">
+                    <img src="{{ url_for('static', filename='img/projeto-05-03.jpg') }}" alt="Projeto 5 — imagem 3">
+                </figure>
+
+                <figure class="imagem-projeto imagem-04">
+                    <img src="{{ url_for('static', filename='img/projeto-05-04.jpg') }}" alt="Projeto 5 — imagem 4">
+                </figure>
+
+                <figure class="imagem-projeto imagem-05">
+                    <img src="{{ url_for('static', filename='img/projeto-05-05.jpg') }}" alt="Projeto 5 — imagem 5">
+                </figure>
+            </div>
+        </article>
     </section>
+
 </section>

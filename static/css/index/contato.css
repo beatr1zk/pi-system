@@ -1,0 +1,76 @@
+/* =========================================
+   SESSÃO CONTATO
+   ========================================= */
+
+.secao-contato {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--espacamento-grande);
+}
+
+.secao-contato .cabecalho-secao {
+    grid-column: 1;
+}
+
+.formulario-contato {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.formulario-contato fieldset {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--cor-borda);
+    background-color: var(--cor-superficie);
+}
+
+.formulario-contato legend {
+    padding: 0 0.5rem;
+    font-weight: 600;
+}
+
+.campo-formulario {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.campo-formulario label {
+    font-weight: 600;
+}
+
+.campo-formulario label span {
+    color: var(--cor-texto-secundario);
+    font-weight: normal;
+}
+
+.campo-formulario input,
+.campo-formulario select,
+.campo-formulario textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-superficie);
+    color: var(--cor-texto);
+}
+
+.campo-formulario textarea {
+    min-height: 9rem;
+    resize: vertical;
+}
+
+.redes-contato {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    align-self: end;
+}
+
+.redes-contato a {
+    color: var(--cor-texto-secundario);
+}
+
+.redes-contato a:hover {
+    color: var(--cor-texto);
+}

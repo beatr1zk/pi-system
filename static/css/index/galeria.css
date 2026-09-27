@@ -1,0 +1,66 @@
+/* SEÇÃO GALERIA */
+.grade-projetos {
+    display: grid;
+    gap: 4rem;
+}
+
+/* PROJETO */
+.projeto {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* CABEÇALHO DO PROJETO */
+.cabecalho-projeto h3 {
+    margin-bottom: 0.5rem;
+}
+.cabecalho-projeto p {
+    color: var(--cor-texto-secundario);
+}
+
+
+/* IMAGENS DO PROJETO */
+.grade-imagens-projeto {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 15rem);
+    gap: 0.75rem;
+}
+
+/* FIGURAS */
+.imagem-projeto {
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--cor-borda);
+    background-color: var(--cor-superficie);
+}
+.imagem-projeto img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* POSIÇÃO DAS 5 IMAGENS */
+.imagem-01 {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+}
+.imagem-02 {
+    grid-column: 3;
+    grid-row: 1;
+}
+.imagem-03 {
+    grid-column: 3;
+    grid-row: 2;
+}
+.imagem-04 {
+    grid-column: 1;
+    grid-row: 3;
+}
+.imagem-05 {
+    grid-column: 2 / 4;
+    grid-row: 3;
+}
