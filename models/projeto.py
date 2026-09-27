@@ -9,4 +9,4 @@ class Projeto:
         self.data_entrega = data_entrega
         self.data_conclusao = data_conclusao
         self.prioridade_id = prioridade_id
-        self.status_id = status_id
+        self.status_id = status_id 
