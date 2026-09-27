@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from routes.cliente_routes import cliente_bp
 from repositories import rep_status_clientes
 from repositories import rep_status_leads
@@ -11,6 +11,10 @@ from repositories import rep_projetos
 
 
 app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 def inicializar_banco():
     rep_status_clientes.criar_tabela_status_clientes()
