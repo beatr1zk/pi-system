@@ -5,6 +5,6 @@ def conectar():
         host = "localhost",
         user = "root",
         password = "~~Rotatoria@2026",
-        database = "ifood2"
+        database = "pi-data-base"
     )
     return conexao
