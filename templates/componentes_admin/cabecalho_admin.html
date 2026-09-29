@@ -1,6 +1,9 @@
-<header>
-    <div class="admin-header">
-        <a href="{{ url_for('index') }}">Beatriz Kava</a>
-        <span>Área administrativa</span>
+<header class="cabecalho-administrativo">
+    <h1 class="titulo-pagina">
+        {{ titulo_pagina | default('Área administrativa') }}
+    </h1>
+
+    <div class="acoes-cabecalho">
+        <button type="button" class="botao-tema" aria-label="Alternar modo claro e escuro" title="Alternar modo claro e escuro"> <span aria-hidden="true">◐</span> </button>
     </div>
 </header>
