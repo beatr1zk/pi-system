@@ -128,8 +128,51 @@ def pesquisar_projetos(termo):
 
     return projetos
 
-# def atualizar_projeto(projeto):
-#     ...
+def atualizar_projeto(projeto):
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-# def excluir_projeto(id_projeto):
-#     ...
+    cursor.execute("""
+        UPDATE projetos
+        SET cliente_id = %s,
+            categoria_id = %s,
+            nome = %s,
+            escopo = %s,
+            data_pedido = %s,
+            data_entrega = %s,
+            data_conclusao = %s,
+            prioridade_id = %s,
+            status_id = %s
+        WHERE id = %s
+    """, (
+        projeto.cliente_id,
+        projeto.categoria_id,
+        projeto.nome,
+        projeto.escopo,
+        projeto.data_pedido,
+        projeto.data_entrega,
+        projeto.data_conclusao,
+        projeto.prioridade_id,
+        projeto.status_id,
+        projeto.id
+    ))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+
+def excluir_projeto(id_projeto):
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        DELETE FROM projetos
+        WHERE id = %s
+    """, (id_projeto,))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
