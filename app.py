@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from routes.cliente_routes import cliente_bp
 from routes.pagina_routes import pagina_bp
 from routes.lead_routes import lead_bp
+from routes.categoria_routes import categoria_bp
 from repositories import rep_status_clientes, rep_status_leads, rep_status_projetos, rep_categorias, rep_prioridades_projeto, rep_clientes, rep_leads, rep_projetos
 
 
@@ -22,7 +23,8 @@ def inicializar_banco():
     rep_leads.criar_tabela_leads()
     rep_projetos.criar_tabela_projetos()
 
-
+ 
+app.register_blueprint(categoria_bp)
 app.register_blueprint(cliente_bp)
 app.register_blueprint(pagina_bp)
 app.register_blueprint(lead_bp)

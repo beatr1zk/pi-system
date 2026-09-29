@@ -70,9 +70,32 @@ def buscar_por_id(id_categoria):
     return categoria
 
 
+def atualizar_categoria(categoria):
+    conexao = conectar()
+    cursor = conexao.cursor()
 
-# def atualizar_categoria(categoria):
-# ...
+    cursor.execute("""
+        UPDATE categorias
+        SET nome = %s
+        WHERE id = %s
+    """, (categoria.nome, categoria.id))
+    
+    conexao.commit()
 
-# def excluir_categoria(id_categoria):
-#     ...
+    cursor.close()
+    conexao.close()
+
+
+def excluir_categoria(id_categoria):
+    conexao = conectar()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        DELETE FROM categorias
+        WHERE id = %s
+    """, (id_categoria,))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
