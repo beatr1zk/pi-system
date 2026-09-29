@@ -1,13 +1,7 @@
 from flask import Flask, render_template
 from routes.cliente_routes import cliente_bp
-from repositories import rep_status_clientes
-from repositories import rep_status_leads
-from repositories import rep_status_projetos
-from repositories import rep_categorias
-from repositories import rep_prioridades_projeto
-from repositories import rep_clientes
-from repositories import rep_leads
-from repositories import rep_projetos
+from routes.pagina_routes import pagina_bp
+from repositories import rep_status_clientes, rep_status_leads, rep_status_projetos, rep_categorias, rep_prioridades_projeto, rep_clientes, rep_leads, rep_projetos
 
 
 app = Flask(__name__)
@@ -29,7 +23,7 @@ def inicializar_banco():
 
 
 app.register_blueprint(cliente_bp)
-
+app.register_blueprint(pagina_bp)
 
 if __name__ == "__main__":
     inicializar_banco()
