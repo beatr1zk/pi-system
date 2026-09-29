@@ -3,6 +3,7 @@ from routes.prioridade_routes import prioridade_bp
 from routes.categoria_routes import categoria_bp
 from routes.cliente_routes import cliente_bp
 from routes.pagina_routes import pagina_bp
+from routes.status_routes import status_bp
 from routes.lead_routes import lead_bp
 from repositories import rep_status_clientes, rep_status_leads, rep_status_projetos, rep_categorias, rep_prioridades_projeto, rep_clientes, rep_leads, rep_projetos
 
@@ -28,6 +29,7 @@ def inicializar_banco():
 app.register_blueprint(prioridade_bp)
 app.register_blueprint(categoria_bp)
 app.register_blueprint(cliente_bp)
+app.register_blueprint(status_bp)
 app.register_blueprint(pagina_bp)
 app.register_blueprint(lead_bp)
 
