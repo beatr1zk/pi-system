@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from flask import Blueprint, request, jsonify
 
 from utils.autenticacao import login_required
@@ -6,11 +8,15 @@ from repositories import rep_projetos
 from models.projeto import Projeto
 
 
-projeto_bp = Blueprint(
-    "projeto",
-    __name__,
-    url_prefix="/projetos"
-)
+projeto_bp = Blueprint("projeto", __name__, url_prefix="/projetos")
+
+CAMPOS_DATA = ("data_pedido", "data_entrega", "data_conclusao")
+CAMPOS_ID = ("cliente_id", "categoria_id", "prioridade_id", "status_id")
+NAO_NULOS = ("nome", "cliente_id", "categoria_id")
+
+
+def _iso(valor):
+    return valor.isoformat() if hasattr(valor, "isoformat") else valor
 
 
 def projeto_para_dict(projeto):
@@ -22,252 +28,175 @@ def projeto_para_dict(projeto):
         "escopo": projeto.escopo,
         "servico": projeto.servico,
         "url_proposta": projeto.url_proposta,
-
-        "data_pedido": (
-            projeto.data_pedido.isoformat()
-            if hasattr(projeto.data_pedido, "isoformat")
-            else projeto.data_pedido
-        ),
-
-        "data_entrega": (
-            projeto.data_entrega.isoformat()
-            if hasattr(projeto.data_entrega, "isoformat")
-            else projeto.data_entrega
-        ),
-
-        "data_conclusao": (
-            projeto.data_conclusao.isoformat()
-            if hasattr(projeto.data_conclusao, "isoformat")
-            else projeto.data_conclusao
-        ),
-
+        "data_pedido": _iso(projeto.data_pedido),
+        "data_entrega": _iso(projeto.data_entrega),
+        "data_conclusao": _iso(projeto.data_conclusao),
         "prioridade_id": projeto.prioridade_id,
-        "status_id": projeto.status_id
+        "status_id": projeto.status_id,
     }
 
 
+def _validar(dados):
+    """Valida apenas os campos presentes em 'dados'.
+    Retorna uma mensagem de erro, ou None se estiver tudo certo."""
+
+    for campo in CAMPOS_DATA:               # "" (formulário vazio) vira None
+        if dados.get(campo) == "":
+            dados[campo] = None
+
+    for campo in NAO_NULOS:
+        if campo in dados and dados[campo] in (None, ""):
+            return f"O campo '{campo}' não pode ser vazio."
+
+    if "nome" in dados:
+        nome = dados["nome"]
+        if not isinstance(nome, str) or not nome.strip() or len(nome) > 150:
+            return "O nome deve ser um texto de 1 a 150 caracteres."
+        dados["nome"] = nome.strip()
+
+    if dados.get("servico") is not None:
+        if not isinstance(dados["servico"], str) or len(dados["servico"]) > 100:
+            return "O serviço deve ser um texto de até 100 caracteres."
+
+    if dados.get("escopo") is not None and not isinstance(dados["escopo"], str):
+        return "O escopo deve ser um texto."
+
+    url = dados.get("url_proposta")
+    if url is not None:
+        if (not isinstance(url, str) or len(url) > 255
+                or not url.lower().startswith(("http://", "https://"))):
+            return "A URL da proposta deve começar com http:// ou https://."
+
+    for campo in CAMPOS_ID:
+        valor = dados.get(campo)
+        if valor is not None and (not isinstance(valor, int) or isinstance(valor, bool)):
+            return f"O campo '{campo}' deve ser um número inteiro."
+
+    for campo in CAMPOS_DATA:
+        valor = dados.get(campo)
+        if valor is None:
+            continue
+        try:
+            if campo == "data_pedido":
+                datetime.fromisoformat(valor)
+            else:
+                date.fromisoformat(valor)
+        except (TypeError, ValueError):
+            formato = "AAAA-MM-DD" + (" ou AAAA-MM-DDTHH:MM:SS" if campo == "data_pedido" else "")
+            return f"O campo '{campo}' deve estar no formato {formato}."
+
+    return None
+
+
 # ============================================================
-# LISTAR PROJETOS
+# LISTAR / BUSCAR / PESQUISAR
 # ============================================================
 
 @projeto_bp.route("/", methods=["GET"])
 @login_required
 def listar_projetos():
-
     projetos = rep_projetos.listar_projetos()
+    return jsonify([projeto_para_dict(p) for p in projetos]), 200
 
-    return jsonify([
-        projeto_para_dict(projeto)
-        for projeto in projetos
-    ]), 200
-
-
-# ============================================================
-# BUSCAR PROJETO POR ID
-# ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["GET"])
 @login_required
 def buscar_projeto(id_projeto):
-
     projeto = rep_projetos.buscar_por_id(id_projeto)
-
     if projeto is None:
-        return jsonify({
-            "erro": "Projeto não encontrado."
-        }), 404
+        return jsonify({"erro": "Projeto não encontrado."}), 404
+    return jsonify(projeto_para_dict(projeto)), 200
 
-    return jsonify(
-        projeto_para_dict(projeto)
-    ), 200
-
-
-# ============================================================
-# PESQUISAR PROJETOS
-# ============================================================
 
 @projeto_bp.route("/pesquisar", methods=["GET"])
 @login_required
 def pesquisar_projetos():
-
     termo = request.args.get("termo", "").strip()
-
     if not termo:
-        return jsonify({
-            "erro": "O termo de pesquisa é obrigatório."
-        }), 400
+        return jsonify({"erro": "O termo de pesquisa é obrigatório."}), 400
 
     projetos = rep_projetos.pesquisar_projetos(termo)
-
-    return jsonify([
-        projeto_para_dict(projeto)
-        for projeto in projetos
-    ]), 200
+    return jsonify([projeto_para_dict(p) for p in projetos]), 200
 
 
 # ============================================================
-# CRIAR PROJETO
+# CRIAR
 # ============================================================
 
 @projeto_bp.route("/", methods=["POST"])
 @login_required
 def criar_projeto():
-
     dados = request.get_json(silent=True)
+    if not isinstance(dados, dict) or not dados:
+        return jsonify({"erro": "Os dados do projeto são obrigatórios."}), 400
 
-    if not dados:
-        return jsonify({
-            "erro": "Os dados do projeto são obrigatórios."
-        }), 400
-
-    campos_obrigatorios = [
-        "cliente_id",
-        "categoria_id",
-        "nome"
-    ]
-
-    for campo in campos_obrigatorios:
-
+    for campo in NAO_NULOS:
         if not dados.get(campo):
-            return jsonify({
-                "erro": f"O campo '{campo}' é obrigatório."
-            }), 400
+            return jsonify({"erro": f"O campo '{campo}' é obrigatório."}), 400
+
+    erro = _validar(dados)
+    if erro:
+        return jsonify({"erro": erro}), 400
 
     projeto = Projeto(
-        dados["cliente_id"],
-        dados["categoria_id"],
-        dados["nome"],
-        dados.get("escopo"),
-        dados.get("servico"),
-        dados.get("data_pedido"),
-        dados.get("data_entrega"),
-        dados.get("data_conclusao"),
-        dados.get("prioridade_id"),
-        dados.get("status_id", 1),
-        dados.get("url_proposta")
+        cliente_id=dados["cliente_id"],
+        categoria_id=dados["categoria_id"],
+        nome=dados["nome"],
+        escopo=dados.get("escopo"),
+        servico=dados.get("servico"),
+        data_pedido=dados.get("data_pedido"),
+        data_entrega=dados.get("data_entrega"),
+        data_conclusao=dados.get("data_conclusao"),
+        prioridade_id=dados.get("prioridade_id"),
+        status_id=dados.get("status_id") or 1,
+        url_proposta=dados.get("url_proposta"),
     )
 
     projeto = rep_projetos.criar_projeto(projeto)
-
-    return jsonify(
-        projeto_para_dict(projeto)
-    ), 201
+    # Relê do banco para devolver data_pedido já preenchida pelo MySQL
+    projeto = rep_projetos.buscar_por_id(projeto.id)
+    return jsonify(projeto_para_dict(projeto)), 201
 
 
 # ============================================================
-# ATUALIZAR PROJETO
+# ATUALIZAR
 # ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["PUT"])
 @login_required
 def atualizar_projeto(id_projeto):
-
-    projeto_existente = rep_projetos.buscar_por_id(
-        id_projeto
-    )
-
-    if projeto_existente is None:
-        return jsonify({
-            "erro": "Projeto não encontrado."
-        }), 404
+    projeto = rep_projetos.buscar_por_id(id_projeto)
+    if projeto is None:
+        return jsonify({"erro": "Projeto não encontrado."}), 404
 
     dados = request.get_json(silent=True)
+    if not isinstance(dados, dict) or not dados:
+        return jsonify({"erro": "Os dados para atualização são obrigatórios."}), 400
 
-    if not dados:
-        return jsonify({
-            "erro": "Os dados para atualização são obrigatórios."
-        }), 400
+    erro = _validar(dados)
+    if erro:
+        return jsonify({"erro": erro}), 400
 
+    for campo in ("cliente_id", "categoria_id", "nome", "escopo", "servico",
+                  "url_proposta", "data_pedido", "data_entrega",
+                  "data_conclusao", "prioridade_id", "status_id"):
+        if campo in dados:
+            setattr(projeto, campo, dados[campo])
 
-    projeto_existente.cliente_id = dados.get(
-        "cliente_id",
-        projeto_existente.cliente_id
-    )
-
-    projeto_existente.categoria_id = dados.get(
-        "categoria_id",
-        projeto_existente.categoria_id
-    )
-
-    projeto_existente.nome = dados.get(
-        "nome",
-        projeto_existente.nome
-    )
-
-    projeto_existente.escopo = dados.get(
-        "escopo",
-        projeto_existente.escopo
-    )
-
-    projeto_existente.servico = dados.get(
-        "servico",
-        projeto_existente.servico
-    )
-
-    projeto_existente.url_proposta = dados.get(
-        "url_proposta",
-        projeto_existente.url_proposta
-    )
-
-    projeto_existente.data_pedido = dados.get(
-        "data_pedido",
-        projeto_existente.data_pedido
-    )
-
-    projeto_existente.data_entrega = dados.get(
-        "data_entrega",
-        projeto_existente.data_entrega
-    )
-
-    projeto_existente.data_conclusao = dados.get(
-        "data_conclusao",
-        projeto_existente.data_conclusao
-    )
-
-    projeto_existente.prioridade_id = dados.get(
-        "prioridade_id",
-        projeto_existente.prioridade_id
-    )
-
-    projeto_existente.status_id = dados.get(
-        "status_id",
-        projeto_existente.status_id
-    )
-
-    rep_projetos.atualizar_projeto(
-        projeto_existente
-    )
-
-    projeto_atualizado = rep_projetos.buscar_por_id(
-        id_projeto
-    )
-
-    return jsonify(
-        projeto_para_dict(projeto_atualizado)
-    ), 200
+    rep_projetos.atualizar_projeto(projeto)
+    projeto = rep_projetos.buscar_por_id(id_projeto)
+    return jsonify(projeto_para_dict(projeto)), 200
 
 
 # ============================================================
-# EXCLUIR PROJETO
+# EXCLUIR
 # ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["DELETE"])
 @login_required
 def excluir_projeto(id_projeto):
+    if rep_projetos.buscar_por_id(id_projeto) is None:
+        return jsonify({"erro": "Projeto não encontrado."}), 404
 
-    projeto = rep_projetos.buscar_por_id(
-        id_projeto
-    )
-
-    if projeto is None:
-        return jsonify({
-            "erro": "Projeto não encontrado."
-        }), 404
-
-    rep_projetos.excluir_projeto(
-        id_projeto
-    )
-
-    return jsonify({
-        "mensagem": "Projeto excluído com sucesso."
-    }), 200
+    rep_projetos.excluir_projeto(id_projeto)
+    return jsonify({"mensagem": "Projeto excluído com sucesso."}), 200

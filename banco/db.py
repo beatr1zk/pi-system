@@ -1,10 +1,11 @@
+import os
 import mysql.connector
 
+
 def conectar():
-    conexao = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "~~Rotatoria@2026",
-        database = "pi-data-base"
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME"),
     )
-    return conexao

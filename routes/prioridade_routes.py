@@ -1,134 +1,76 @@
 from flask import Blueprint, request, jsonify
 
+from utils.autenticacao import login_required
+from utils.validacao import ler_nome
+
 from repositories import rep_prioridades_projeto
 from models.prioridade_projeto import PrioridadeProjeto
 
 
-prioridade_bp = Blueprint(
-    "prioridade",
-    __name__,
-    url_prefix="/prioridades"
-)
+prioridade_bp = Blueprint("prioridade", __name__, url_prefix="/prioridades")
 
 
 def prioridade_para_dict(prioridade):
-    return {
-        "id": prioridade.id,
-        "nome": prioridade.nome
-    }
+    return {"id": prioridade.id, "nome": prioridade.nome}
+
+
+def _achar(id_prioridade):
+    for p in rep_prioridades_projeto.listar_prioridades_projeto():
+        if p.id == id_prioridade:
+            return p
+    return None
 
 
 @prioridade_bp.route("/", methods=["GET"])
+@login_required
 def listar_prioridades():
     prioridades = rep_prioridades_projeto.listar_prioridades_projeto()
-
-    return jsonify([
-        prioridade_para_dict(prioridade)
-        for prioridade in prioridades
-    ]), 200
+    return jsonify([prioridade_para_dict(p) for p in prioridades]), 200
 
 
 @prioridade_bp.route("/<int:id_prioridade>", methods=["GET"])
+@login_required
 def buscar_prioridade(id_prioridade):
-    prioridades = rep_prioridades_projeto.listar_prioridades_projeto()
-
-    for prioridade in prioridades:
-        if prioridade.id == id_prioridade:
-            return jsonify(
-                prioridade_para_dict(prioridade)
-            ), 200
-
-    return jsonify({
-        "erro": "Prioridade não encontrada."
-    }), 404
+    prioridade = _achar(id_prioridade)
+    if prioridade is None:
+        return jsonify({"erro": "Prioridade não encontrada."}), 404
+    return jsonify(prioridade_para_dict(prioridade)), 200
 
 
 @prioridade_bp.route("/", methods=["POST"])
+@login_required
 def criar_prioridade():
-    dados = request.get_json(silent=True)
-
-    if not dados:
-        return jsonify({
-            "erro": "Os dados da prioridade são obrigatórios."
-        }), 400
-
-    if not dados.get("nome"):
-        return jsonify({
-            "erro": "O campo 'nome' é obrigatório."
-        }), 400
-
-    prioridade = PrioridadeProjeto(
-        dados["nome"]
-    )
+    nome, erro = ler_nome(request.get_json(silent=True))
+    if erro:
+        return jsonify({"erro": erro}), 400
 
     prioridade = rep_prioridades_projeto.criar_prioridade_projeto(
-        prioridade
+        PrioridadeProjeto(nome)
     )
-
-    return jsonify(
-        prioridade_para_dict(prioridade)
-    ), 201
+    return jsonify(prioridade_para_dict(prioridade)), 201
 
 
 @prioridade_bp.route("/<int:id_prioridade>", methods=["PUT"])
+@login_required
 def atualizar_prioridade(id_prioridade):
-    prioridades = rep_prioridades_projeto.listar_prioridades_projeto()
+    prioridade = _achar(id_prioridade)
+    if prioridade is None:
+        return jsonify({"erro": "Prioridade não encontrada."}), 404
 
-    prioridade_existente = None
+    nome, erro = ler_nome(request.get_json(silent=True))
+    if erro:
+        return jsonify({"erro": erro}), 400
 
-    for prioridade in prioridades:
-        if prioridade.id == id_prioridade:
-            prioridade_existente = prioridade
-            break
-
-    if prioridade_existente is None:
-        return jsonify({
-            "erro": "Prioridade não encontrada."
-        }), 404
-
-    dados = request.get_json(silent=True)
-
-    if not dados:
-        return jsonify({
-            "erro": "Os dados para atualização são obrigatórios."
-        }), 400
-
-    if not dados.get("nome"):
-        return jsonify({
-            "erro": "O campo 'nome' é obrigatório."
-        }), 400
-
-    prioridade_existente.nome = dados["nome"]
-
-    rep_prioridades_projeto.atualizar_prioridade_projeto(
-        prioridade_existente
-    )
-
-    return jsonify(
-        prioridade_para_dict(prioridade_existente)
-    ), 200
+    prioridade.nome = nome
+    rep_prioridades_projeto.atualizar_prioridade_projeto(prioridade)
+    return jsonify(prioridade_para_dict(prioridade)), 200
 
 
 @prioridade_bp.route("/<int:id_prioridade>", methods=["DELETE"])
+@login_required
 def excluir_prioridade(id_prioridade):
-    prioridades = rep_prioridades_projeto.listar_prioridades_projeto()
+    if _achar(id_prioridade) is None:
+        return jsonify({"erro": "Prioridade não encontrada."}), 404
 
-    prioridade_existente = None
-
-    for prioridade in prioridades:
-        if prioridade.id == id_prioridade:
-            prioridade_existente = prioridade
-            break
-
-    if prioridade_existente is None:
-        return jsonify({
-            "erro": "Prioridade não encontrada."
-        }), 404
-
-    rep_prioridades_projeto.excluir_prioridade_projeto(
-        id_prioridade
-    )
-
-    return jsonify({
-        "mensagem": "Prioridade excluída com sucesso."
-    }), 200
+    rep_prioridades_projeto.excluir_prioridade_projeto(id_prioridade)
+    return jsonify({"mensagem": "Prioridade excluída com sucesso."}), 200
