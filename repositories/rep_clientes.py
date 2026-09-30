@@ -13,7 +13,6 @@ def criar_tabela_clientes():
             cpf VARCHAR(14),
             servico VARCHAR(100),
             detalhes TEXT,
-            url_proposta VARCHAR(255),
             data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
             data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
             ON UPDATE CURRENT_TIMESTAMP,
@@ -38,11 +37,10 @@ def criar_cliente(cliente):
             cpf,
             servico,
             detalhes,
-            url_proposta,
             status_id
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.url_proposta, cliente.status_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.status_id)
     )
 
     conexao.commit()
@@ -58,7 +56,7 @@ def listar_clientes():
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, nome, email, telefone, cpf, servico, detalhes,
-               url_proposta, data_cadastro, data_atualizacao, status_id
+               data_cadastro, data_atualizacao, status_id
         FROM clientes
     """)
 
@@ -68,8 +66,8 @@ def listar_clientes():
     conexao.close()
 
     clientes = []
-    for id_cliente, nome, email, telefone, cpf, servico, detalhes, url_proposta, data_cadastro, data_atualizacao, status_id in resultado:
-        cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, url_proposta, status_id)
+    for id_cliente, nome, email, telefone, cpf, servico, detalhes, data_cadastro, data_atualizacao, status_id in resultado:
+        cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, status_id)
         cliente.id = id_cliente
         cliente.data_cadastro = data_cadastro
         cliente.data_atualizacao = data_atualizacao
@@ -81,7 +79,7 @@ def buscar_por_id(id_cliente):
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, nome, email, telefone, cpf, servico, detalhes,
-               url_proposta, data_cadastro, data_atualizacao, status_id
+               data_cadastro, data_atualizacao, status_id
         FROM clientes
         WHERE id = %s
     """, (id_cliente,)
@@ -93,9 +91,9 @@ def buscar_por_id(id_cliente):
 
     if resultado is None:
         return None
-    id_cliente, nome, email, telefone, cpf, servico, detalhes, url_proposta, data_cadastro, data_atualizacao, status_id = resultado
+    id_cliente, nome, email, telefone, cpf, servico, detalhes, data_cadastro, data_atualizacao, status_id = resultado
 
-    cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, url_proposta, status_id)
+    cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, status_id)
     cliente.id = id_cliente
     cliente.data_cadastro = data_cadastro
     cliente.data_atualizacao = data_atualizacao
@@ -106,7 +104,7 @@ def pesquisar_clientes(termo):
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, nome, email, telefone, cpf, servico, detalhes,
-               url_proposta, data_cadastro, data_atualizacao, status_id
+               data_cadastro, data_atualizacao, status_id
         FROM clientes
         WHERE nome LIKE %s
            OR email LIKE %s
@@ -121,8 +119,8 @@ def pesquisar_clientes(termo):
 
     clientes = []
 
-    for id_cliente, nome, email, telefone, cpf, servico, detalhes, url_proposta, data_cadastro, data_atualizacao, status_id in resultado:
-        cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, url_proposta, status_id)
+    for id_cliente, nome, email, telefone, cpf, servico, detalhes, data_cadastro, data_atualizacao, status_id in resultado:
+        cliente = Cliente(nome, email, telefone, cpf, servico, detalhes, status_id)
         cliente.id = id_cliente
         cliente.data_cadastro = data_cadastro
         cliente.data_atualizacao = data_atualizacao
@@ -140,10 +138,9 @@ def atualizar_cliente(cliente):
             cpf = %s,
             servico = %s,
             detalhes = %s,
-            url_proposta = %s,
             status_id = %s
         WHERE id = %s
-    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.url_proposta, cliente.status_id, cliente.id)
+    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.servico, cliente.detalhes, cliente.status_id, cliente.id)
     )
     conexao.commit()
 

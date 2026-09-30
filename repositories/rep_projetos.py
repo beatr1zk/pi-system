@@ -11,6 +11,7 @@ def criar_tabela_projetos():
             categoria_id INT NOT NULL,
             nome VARCHAR(150) NOT NULL,
             escopo TEXT,
+            url_proposta VARCHAR(255),
             data_pedido DATETIME DEFAULT CURRENT_TIMESTAMP,
             data_entrega DATE,
             data_conclusao DATE,
@@ -40,13 +41,14 @@ def criar_projeto(projeto):
             categoria_id,
             nome,
             escopo,
+            url_proposta,
             data_pedido,
             data_entrega,
             data_conclusao,
             prioridade_id,
             status_id
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", 
-        (projeto.cliente_id,projeto.categoria_id,projeto.nome,projeto.escopo,projeto.data_pedido,projeto.data_entrega,
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", 
+        (projeto.cliente_id,projeto.categoria_id,projeto.nome,projeto.escopo,projeto.url_proposta,projeto.data_pedido,projeto.data_entrega,
         projeto.data_conclusao,projeto.prioridade_id,projeto.status_id)
     )
     conexao.commit()
@@ -61,7 +63,7 @@ def listar_projetos():
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, cliente_id, categoria_id, nome, escopo,
-               data_pedido, data_entrega, data_conclusao,
+               url_proposta, data_pedido, data_entrega, data_conclusao,
                prioridade_id, status_id
         FROM projetos
     """)
@@ -71,8 +73,8 @@ def listar_projetos():
     conexao.close()
 
     projetos = []
-    for id_projeto, cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id in resultado:
-        projeto = Projeto( cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id)
+    for id_projeto, cliente_id, categoria_id, nome, escopo, url_proposta, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id in resultado:
+        projeto = Projeto(cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id, url_proposta)
         projeto.id = id_projeto
         projetos.append(projeto)
     return projetos
@@ -82,7 +84,7 @@ def buscar_por_id(id_projeto):
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, cliente_id, categoria_id, nome, escopo,
-               data_pedido, data_entrega, data_conclusao,
+               url_proposta, data_pedido, data_entrega, data_conclusao,
                prioridade_id, status_id
         FROM projetos
         WHERE id = %s
@@ -95,9 +97,9 @@ def buscar_por_id(id_projeto):
 
     if resultado is None:
         return None
-    id_projeto, cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id = resultado
+    id_projeto, cliente_id, categoria_id, nome, escopo, url_proposta, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id = resultado
 
-    projeto = Projeto(cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id
+    projeto = Projeto(cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id, url_proposta
     )
     projeto.id = id_projeto
     return projeto
@@ -107,7 +109,7 @@ def pesquisar_projetos(termo):
     cursor = conexao.cursor()
     cursor.execute("""
         SELECT id, cliente_id, categoria_id, nome, escopo,
-               data_pedido, data_entrega, data_conclusao,
+               url_proposta, data_pedido, data_entrega, data_conclusao,
                prioridade_id, status_id
         FROM projetos
         WHERE nome LIKE %s
@@ -121,8 +123,8 @@ def pesquisar_projetos(termo):
 
     projetos = []
 
-    for id_projeto, cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id in resultado:
-        projeto = Projeto(cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id)
+    for id_projeto, cliente_id, categoria_id, nome, escopo, url_proposta, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id in resultado:
+        projeto = Projeto(cliente_id, categoria_id, nome, escopo, data_pedido, data_entrega, data_conclusao, prioridade_id, status_id, url_proposta)
         projeto.id = id_projeto
         projetos.append(projeto)
 
@@ -138,6 +140,7 @@ def atualizar_projeto(projeto):
             categoria_id = %s,
             nome = %s,
             escopo = %s,
+            url_proposta = %s,
             data_pedido = %s,
             data_entrega = %s,
             data_conclusao = %s,
@@ -149,6 +152,7 @@ def atualizar_projeto(projeto):
         projeto.categoria_id,
         projeto.nome,
         projeto.escopo,
+        projeto.url_proposta,
         projeto.data_pedido,
         projeto.data_entrega,
         projeto.data_conclusao,
