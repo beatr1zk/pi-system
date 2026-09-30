@@ -1,23 +1,20 @@
 from flask import Blueprint, request, jsonify
 
 from utils.autenticacao import login_required
-
-from repositories import rep_clientes
-from models.cliente import Cliente
+from utils.validacao import validar_lead, validar_cliente
 
 from repositories import rep_leads
+from models.cliente import Cliente
 from models.lead import Lead
 
 
-lead_bp = Blueprint(
-    "lead",
-    __name__,
-    url_prefix="/leads"
-)
+lead_bp = Blueprint("lead", __name__, url_prefix="/leads")
+
+CAMPOS_EDITAVEIS = ("nome", "email", "telefone", "servico",
+                    "mensagem", "status_id", "cliente_id")
 
 
 def lead_para_dict(lead):
-
     return {
         "id": lead.id,
         "nome": lead.nome,
@@ -26,302 +23,135 @@ def lead_para_dict(lead):
         "servico": lead.servico,
         "mensagem": lead.mensagem,
         "status_id": lead.status_id,
-        "data_cadastro": (
-            lead.data_cadastro.isoformat()
-            if lead.data_cadastro else None
-        ),
-        "cliente_id": lead.cliente_id
+        "data_cadastro": lead.data_cadastro.isoformat() if lead.data_cadastro else None,
+        "cliente_id": lead.cliente_id,
     }
-
 
 
 @lead_bp.route("/", methods=["GET"])
 @login_required
 def listar_leads():
-
     leads = rep_leads.listar_leads()
-
-    return jsonify([
-        lead_para_dict(lead)
-        for lead in leads
-    ]), 200
-
+    return jsonify([lead_para_dict(l) for l in leads]), 200
 
 
 @lead_bp.route("/<int:id_lead>", methods=["GET"])
 @login_required
 def buscar_lead(id_lead):
-
     lead = rep_leads.buscar_por_id(id_lead)
-
-
     if lead is None:
-
-        return jsonify({
-            "erro": "Lead não encontrado."
-        }), 404
-
-
-    return jsonify(
-        lead_para_dict(lead)
-    ), 200
-
+        return jsonify({"erro": "Lead não encontrado."}), 404
+    return jsonify(lead_para_dict(lead)), 200
 
 
 @lead_bp.route("/pesquisar", methods=["GET"])
 @login_required
 def pesquisar_leads():
-
-    termo = request.args.get(
-        "termo",
-        ""
-    ).strip()
-
-
+    termo = request.args.get("termo", "").strip()
     if not termo:
-
-        return jsonify({
-            "erro": "O termo de pesquisa é obrigatório."
-        }), 400
-
-
-
+        return jsonify({"erro": "O termo de pesquisa é obrigatório."}), 400
     leads = rep_leads.pesquisar_leads(termo)
-
-
-    return jsonify([
-        lead_para_dict(lead)
-        for lead in leads
-    ]), 200
-
+    return jsonify([lead_para_dict(l) for l in leads]), 200
 
 
 @lead_bp.route("/", methods=["POST"])
 @login_required
 def criar_lead():
-
-    dados = request.get_json(
-        silent=True
-    )
-
-
-    if not dados:
-
-        return jsonify({
-            "erro": "Os dados do lead são obrigatórios."
-        }), 400
-
-
-
-    campos_obrigatorios = [
-        "nome",
-        "servico"
-    ]
-
-
-    for campo in campos_obrigatorios:
-
-        if not dados.get(campo):
-
-            return jsonify({
-                "erro": f"O campo '{campo}' é obrigatório."
-            }), 400
-
-
+    dados = request.get_json(silent=True)
+    erro = validar_lead(dados, criando=True)
+    if erro:
+        return jsonify({"erro": erro}), 400
 
     lead = Lead(
-        dados["nome"],
-        dados.get("email"),
-        dados.get("telefone"),
-        dados["servico"],
-        dados.get("mensagem"),
-        dados.get("status_id"),
-        dados.get("cliente_id")
+        nome=dados["nome"],
+        email=dados.get("email"),
+        telefone=dados.get("telefone"),
+        servico=dados["servico"],
+        mensagem=dados.get("mensagem"),
+        status_id=dados.get("status_id"),
+        cliente_id=dados.get("cliente_id"),
     )
-
-
     lead = rep_leads.criar_lead(lead)
-
-
-    return jsonify(
-        lead_para_dict(lead)
-    ), 201
-
+    lead = rep_leads.buscar_por_id(lead.id)
+    return jsonify(lead_para_dict(lead)), 201
 
 
 @lead_bp.route("/<int:id_lead>/converter", methods=["POST"])
 @login_required
 def converter_lead(id_lead):
-
     lead = rep_leads.buscar_por_id(id_lead)
-
-
     if lead is None:
-
-        return jsonify({
-            "erro": "Lead não encontrado."
-        }), 404
-
-
-
+        return jsonify({"erro": "Lead não encontrado."}), 404
     if lead.cliente_id is not None:
+        return jsonify({"erro": "Este lead já foi convertido."}), 409
 
+    corpo = request.get_json(silent=True)
+    if not isinstance(corpo, dict):
+        corpo = {}
+
+    dados_cliente = {
+        "nome": lead.nome,
+        "email": corpo.get("email") or lead.email,  # e-mail do corpo vale se o lead não tem
+        "telefone": lead.telefone,
+        "cpf": corpo.get("cpf"),
+        "detalhes": corpo.get("detalhes"),
+    }
+    if not dados_cliente["email"]:
         return jsonify({
-            "erro": "Este lead já foi convertido."
+            "erro": "Este lead não tem e-mail. Informe 'email' no corpo da requisição."
         }), 400
 
-
-
-    dados = request.get_json(
-        silent=True
-    )
-
-
-    if dados is None:
-
-        dados = {}
-
-
+    erro = validar_cliente(dados_cliente, criando=True)
+    if erro:
+        return jsonify({"erro": erro}), 400
 
     cliente = Cliente(
-        lead.nome,
-        lead.email,
-        lead.telefone,
-        dados.get("cpf"),
-        dados.get("detalhes"),
-        None
+        nome=dados_cliente["nome"],
+        email=dados_cliente["email"],
+        telefone=dados_cliente["telefone"],
+        cpf=dados_cliente["cpf"],
+        detalhes=dados_cliente["detalhes"],
+        status_id=None,
     )
 
+    try:
+        cliente = rep_leads.converter_lead(id_lead, cliente)
+    except ValueError as e:
+        return jsonify({"erro": str(e)}), 409
 
-    cliente = rep_clientes.criar_cliente(cliente)
-
-
-
-    rep_leads.vincular_cliente_lead(
-        lead.id,
-        cliente.id
-    )
-
-
-
-    lead_convertido = rep_leads.buscar_por_id(
-        id_lead
-    )
-
-
+    lead = rep_leads.buscar_por_id(id_lead)
     return jsonify({
         "mensagem": "Lead convertido com sucesso.",
-        "lead": lead_para_dict(lead_convertido)
+        "lead": lead_para_dict(lead),
+        "cliente_id": cliente.id,
     }), 201
-
 
 
 @lead_bp.route("/<int:id_lead>", methods=["PUT"])
 @login_required
 def atualizar_lead(id_lead):
+    lead = rep_leads.buscar_por_id(id_lead)
+    if lead is None:
+        return jsonify({"erro": "Lead não encontrado."}), 404
 
-    lead_existente = rep_leads.buscar_por_id(id_lead)
+    dados = request.get_json(silent=True)
+    erro = validar_lead(dados, criando=False)
+    if erro:
+        return jsonify({"erro": erro}), 400
 
+    for campo in CAMPOS_EDITAVEIS:
+        if campo in dados:
+            setattr(lead, campo, dados[campo])
 
-    if lead_existente is None:
-
-        return jsonify({
-            "erro": "Lead não encontrado."
-        }), 404
-
-
-
-    dados = request.get_json(
-        silent=True
-    )
-
-
-    if not dados:
-
-        return jsonify({
-            "erro": "Os dados para atualização são obrigatórios."
-        }), 400
-
-
-
-    lead_existente.nome = dados.get(
-        "nome",
-        lead_existente.nome
-    )
-
-
-    lead_existente.email = dados.get(
-        "email",
-        lead_existente.email
-    )
-
-
-    lead_existente.telefone = dados.get(
-        "telefone",
-        lead_existente.telefone
-    )
-
-
-    lead_existente.servico = dados.get(
-        "servico",
-        lead_existente.servico
-    )
-
-
-    lead_existente.mensagem = dados.get(
-        "mensagem",
-        lead_existente.mensagem
-    )
-
-
-    lead_existente.status_id = dados.get(
-        "status_id",
-        lead_existente.status_id
-    )
-
-
-    lead_existente.cliente_id = dados.get(
-        "cliente_id",
-        lead_existente.cliente_id
-    )
-
-
-    rep_leads.atualizar_lead(
-        lead_existente
-    )
-
-
-    lead_atualizado = rep_leads.buscar_por_id(
-        id_lead
-    )
-
-
-    return jsonify(
-        lead_para_dict(lead_atualizado)
-    ), 200
-
+    rep_leads.atualizar_lead(lead)
+    lead = rep_leads.buscar_por_id(id_lead)
+    return jsonify(lead_para_dict(lead)), 200
 
 
 @lead_bp.route("/<int:id_lead>", methods=["DELETE"])
 @login_required
 def excluir_lead(id_lead):
-
-    lead = rep_leads.buscar_por_id(id_lead)
-
-
-    if lead is None:
-
-        return jsonify({
-            "erro": "Lead não encontrado."
-        }), 404
-
-
-
-    rep_leads.excluir_lead(
-        id_lead
-    )
-
-
-    return jsonify({
-        "mensagem": "Lead excluído com sucesso."
-    }), 200
+    if rep_leads.buscar_por_id(id_lead) is None:
+        return jsonify({"erro": "Lead não encontrado."}), 404
+    rep_leads.excluir_lead(id_lead)
+    return jsonify({"mensagem": "Lead excluído com sucesso."}), 200

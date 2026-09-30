@@ -1,81 +1,47 @@
-from banco.db import conectar
+from banco.db import cursor_bd
 from models.status_cliente import StatusCliente
 
-def criar_tabela_status_clientes():
-    conexao = conectar()
-    cursor = conexao.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS status_clientes(
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(50) NOT NULL UNIQUE
-        )"""
-    )
 
-    conexao.commit()
-    cursor.close()
-    conexao.close()
+def criar_tabela_status_clientes():
+    with cursor_bd(commit=True) as cursor:
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS status_clientes(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(50) NOT NULL UNIQUE
+            )
+        """)
+
 
 def criar_status_cliente(status):
-    conexao = conectar()
-    cursor = conexao.cursor()
-    cursor.execute("""
-        INSERT INTO status_clientes(nome)
-        VALUES (%s)
-    """, (status.nome,)
-    )
-    conexao.commit()
-
-    status.id = cursor.lastrowid
-
-    cursor.close()
-    conexao.close()
+    with cursor_bd(commit=True) as cursor:
+        cursor.execute(
+            "INSERT INTO status_clientes(nome) VALUES (%s)", (status.nome,)
+        )
+        status.id = cursor.lastrowid
     return status
 
+
 def listar_status_clientes():
-    conexao = conectar()
-    cursor = conexao.cursor()
-    cursor.execute("""
-        SELECT id, nome
-        FROM status_clientes
-    """)
-    resultado = cursor.fetchall()
+    with cursor_bd() as cursor:
+        cursor.execute("SELECT id, nome FROM status_clientes")
+        linhas = cursor.fetchall()
 
-    cursor.close()
-    conexao.close()
-
-    status_clientes = []
-
-    for id_status, nome in resultado:
+    lista = []
+    for id_status, nome in linhas:
         status = StatusCliente(nome)
         status.id = id_status
-        status_clientes.append(status)
-    return status_clientes
+        lista.append(status)
+    return lista
+
 
 def atualizar_status_cliente(status):
-    conexao = conectar()
-    cursor = conexao.cursor()
-    cursor.execute("""
-        UPDATE status_clientes
-        SET nome = %s
-        WHERE id = %s
-    """, (status.nome, status.id)
-    )
+    with cursor_bd(commit=True) as cursor:
+        cursor.execute(
+            "UPDATE status_clientes SET nome = %s WHERE id = %s",
+            (status.nome, status.id),
+        )
 
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
 
 def excluir_status_cliente(id_status):
-    conexao = conectar()
-    cursor = conexao.cursor()
-
-    cursor.execute("""
-        DELETE FROM status_clientes
-        WHERE id = %s
-    """, (id_status,))
-
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
+    with cursor_bd(commit=True) as cursor:
+        cursor.execute("DELETE FROM status_clientes WHERE id = %s", (id_status,))
