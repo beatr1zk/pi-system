@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 
+from utils.autenticacao import login_required
+
 from repositories import rep_projetos
 from models.projeto import Projeto
 
@@ -18,6 +20,8 @@ def projeto_para_dict(projeto):
         "categoria_id": projeto.categoria_id,
         "nome": projeto.nome,
         "escopo": projeto.escopo,
+        "servico": projeto.servico,
+        "url_proposta": projeto.url_proposta,
 
         "data_pedido": (
             projeto.data_pedido.isoformat()
@@ -47,6 +51,7 @@ def projeto_para_dict(projeto):
 # ============================================================
 
 @projeto_bp.route("/", methods=["GET"])
+@login_required
 def listar_projetos():
 
     projetos = rep_projetos.listar_projetos()
@@ -62,6 +67,7 @@ def listar_projetos():
 # ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["GET"])
+@login_required
 def buscar_projeto(id_projeto):
 
     projeto = rep_projetos.buscar_por_id(id_projeto)
@@ -81,6 +87,7 @@ def buscar_projeto(id_projeto):
 # ============================================================
 
 @projeto_bp.route("/pesquisar", methods=["GET"])
+@login_required
 def pesquisar_projetos():
 
     termo = request.args.get("termo", "").strip()
@@ -103,6 +110,7 @@ def pesquisar_projetos():
 # ============================================================
 
 @projeto_bp.route("/", methods=["POST"])
+@login_required
 def criar_projeto():
 
     dados = request.get_json(silent=True)
@@ -130,11 +138,13 @@ def criar_projeto():
         dados["categoria_id"],
         dados["nome"],
         dados.get("escopo"),
+        dados.get("servico"),
         dados.get("data_pedido"),
         dados.get("data_entrega"),
         dados.get("data_conclusao"),
         dados.get("prioridade_id"),
-        dados.get("status_id")
+        dados.get("status_id", 1),
+        dados.get("url_proposta")
     )
 
     projeto = rep_projetos.criar_projeto(projeto)
@@ -149,6 +159,7 @@ def criar_projeto():
 # ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["PUT"])
+@login_required
 def atualizar_projeto(id_projeto):
 
     projeto_existente = rep_projetos.buscar_por_id(
@@ -166,6 +177,7 @@ def atualizar_projeto(id_projeto):
         return jsonify({
             "erro": "Os dados para atualização são obrigatórios."
         }), 400
+
 
     projeto_existente.cliente_id = dados.get(
         "cliente_id",
@@ -185,6 +197,16 @@ def atualizar_projeto(id_projeto):
     projeto_existente.escopo = dados.get(
         "escopo",
         projeto_existente.escopo
+    )
+
+    projeto_existente.servico = dados.get(
+        "servico",
+        projeto_existente.servico
+    )
+
+    projeto_existente.url_proposta = dados.get(
+        "url_proposta",
+        projeto_existente.url_proposta
     )
 
     projeto_existente.data_pedido = dados.get(
@@ -230,6 +252,7 @@ def atualizar_projeto(id_projeto):
 # ============================================================
 
 @projeto_bp.route("/<int:id_projeto>", methods=["DELETE"])
+@login_required
 def excluir_projeto(id_projeto):
 
     projeto = rep_projetos.buscar_por_id(
