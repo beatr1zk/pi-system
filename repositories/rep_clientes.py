@@ -15,9 +15,7 @@ def criar_tabela_clientes():
             data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
             data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
             ON UPDATE CURRENT_TIMESTAMP,
-            status_id INT,
-
-            FOREIGN KEY (status_id) REFERENCES status_clientes(id)
+            status_id INT DEFAULT 1
         )"""
     )
 
@@ -34,11 +32,10 @@ def criar_cliente(cliente):
             email,
             telefone,
             cpf,
-            detalhes,
-            status_id
+            detalhes
         )
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.detalhes, cliente.status_id)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.detalhes)
     )
 
     conexao.commit()
@@ -89,12 +86,14 @@ def buscar_por_id(id_cliente):
 
     if resultado is None:
         return None
+
     id_cliente, nome, email, telefone, cpf, detalhes, data_cadastro, data_atualizacao, status_id = resultado
 
     cliente = Cliente(nome, email, telefone, cpf, detalhes, status_id)
     cliente.id = id_cliente
     cliente.data_cadastro = data_cadastro
     cliente.data_atualizacao = data_atualizacao
+
     return cliente
 
 def pesquisar_clientes(termo):
@@ -110,6 +109,7 @@ def pesquisar_clientes(termo):
            OR cpf LIKE %s
     """, (f"%{termo}%", f"%{termo}%", f"%{termo}%", f"%{termo}%")
     )
+
     resultado = cursor.fetchall()
 
     cursor.close()
@@ -123,6 +123,7 @@ def pesquisar_clientes(termo):
         cliente.data_cadastro = data_cadastro
         cliente.data_atualizacao = data_atualizacao
         clientes.append(cliente)
+
     return clientes
 
 def atualizar_cliente(cliente):
@@ -139,6 +140,7 @@ def atualizar_cliente(cliente):
         WHERE id = %s
     """, (cliente.nome, cliente.email, cliente.telefone, cliente._cpf, cliente.detalhes, cliente.status_id, cliente.id)
     )
+
     conexao.commit()
 
     cursor.close()
@@ -147,6 +149,7 @@ def atualizar_cliente(cliente):
 def excluir_cliente(id_cliente):
     conexao = conectar()
     cursor = conexao.cursor()
+
     cursor.execute("""
         DELETE FROM clientes
         WHERE id = %s

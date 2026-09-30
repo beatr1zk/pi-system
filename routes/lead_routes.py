@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 
+from repositories import rep_clientes
+from models.cliente import Cliente
 from repositories import rep_leads
 from models.lead import Lead
 
@@ -93,6 +95,49 @@ def criar_lead():
     lead = rep_leads.criar_lead(lead)
 
     return jsonify(lead_para_dict(lead)), 201
+
+
+@lead_bp.route("/<int:id_lead>/converter", methods=["POST"])
+def converter_lead(id_lead):
+    lead = rep_leads.buscar_por_id(id_lead)
+
+    if lead is None:
+        return jsonify({
+            "erro": "Lead não encontrado."
+        }), 404
+
+    if lead.cliente_id is not None:
+        return jsonify({
+            "erro": "Este lead já foi convertido."
+        }), 400
+
+    dados = request.get_json(silent=True)
+
+    if dados is None:
+        dados = {}
+
+    cliente = Cliente(
+        lead.nome,
+        lead.email,
+        lead.telefone,
+        dados.get("cpf"),
+        dados.get("detalhes"),
+        None
+    )
+
+    cliente = rep_clientes.criar_cliente(cliente)
+
+    rep_leads.vincular_cliente_lead(
+        lead.id,
+        cliente.id
+    )
+
+    lead_convertido = rep_leads.buscar_por_id(id_lead)
+
+    return jsonify({
+        "mensagem": "Lead convertido com sucesso.",
+        "lead": lead_para_dict(lead_convertido)
+    }), 201
 
 
 @lead_bp.route("/<int:id_lead>", methods=["PUT"])

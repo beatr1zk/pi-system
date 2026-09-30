@@ -135,6 +135,22 @@ def atualizar_lead(lead):
     cursor.close()
     conexao.close()
 
+
+def vincular_cliente_lead(id_lead, id_cliente):
+    conexao = conectar()
+    cursor = conexao.cursor()
+    cursor.execute("""
+        UPDATE leads
+        SET cliente_id = %s
+        WHERE id = %s
+    """, (id_cliente, id_lead)
+    )
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+
 def excluir_lead(id_lead):
     conexao = conectar()
     cursor = conexao.cursor()
