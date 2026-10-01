@@ -1,3 +1,4 @@
+import os
 import requests
 
 BASE = "http://127.0.0.1:5000"
@@ -5,7 +6,7 @@ s = requests.Session()
 
 
 def mostrar(titulo, r):
-    print(f"{titulo:<42} {r.status_code}  {r.text.strip()[:400]}")
+    print(f"{titulo:<46} {r.status_code}  {r.text.strip()[:300]}")
 
 
 # ---------------------------------------------------------
@@ -15,9 +16,13 @@ print("--- login ---")
 mostrar("GET /categorias/ sem login (401)", requests.get(f"{BASE}/categorias/"))
 
 usuario = input("Usuário: ")
-senha = input("Senha: ")
+senha = os.getenv("TESTE_SENHA") or input("Senha (aparece na tela): ")
 
-mostrar("POST /login/ (200)", s.post(f"{BASE}/login/", json={"usuario": usuario, "senha": senha}))
+r = s.post(f"{BASE}/login/", json={"usuario": usuario, "senha": senha})
+mostrar("POST /login/ (200)", r)
+if r.status_code != 200:
+    raise SystemExit("Login falhou. Corrija usuário/senha (ou reinicie o app se estiver bloqueado) e rode de novo.")
+
 mostrar("POST /login/ senha errada (401)", requests.post(f"{BASE}/login/", json={"usuario": usuario, "senha": "errada"}))
 mostrar("POST /login/ usuario não texto (400)", requests.post(f"{BASE}/login/", json={"usuario": {"a": 1}, "senha": "x"}))
 
@@ -63,11 +68,13 @@ mostrar("POST status_id inexistente (409)", s.post(f"{BASE}/clientes/", json={"n
 mostrar("PUT nome null (400)", s.put(f"{BASE}/clientes/{cid}", json={"nome": None}))
 
 r = s.post(f"{BASE}/projetos/", json={"cliente_id": cid, "categoria_id": 1, "nome": "Projeto Teste",
-                                      "servico": "Identidade visual",
-                                      "escopo": "Logo, paleta e manual de marca completo"})
+                                      "servico": "identidade-visual",
+                                      "escopo": "Logo, paleta e manual de marca completo",
+                                      "data_entrega": "2026-10-15"})
 mostrar("POST projeto (201)", r)
 pid = r.json().get("id")
 print("   data_pedido preenchida?", bool(r.json().get("data_pedido")))
+print("   data_entrega igual à enviada?", r.json().get("data_entrega") == "2026-10-15")
 mostrar("GET projeto (servico/escopo certos?)", s.get(f"{BASE}/projetos/{pid}"))
 mostrar("PUT projeto (200)", s.put(f"{BASE}/projetos/{pid}", json={"nome": "Projeto Teste 2"}))
 mostrar("GET após PUT (continuam certos?)", s.get(f"{BASE}/projetos/{pid}"))
@@ -85,15 +92,16 @@ mostrar("Converter com e-mail (201)", r)
 novo_cid = r.json().get("cliente_id")
 
 mostrar("Converter de novo (409)", s.post(f"{BASE}/leads/{lid}/converter", json={"email": "lead@exemplo.com"}))
-mostrar("DELETE lead convertido (409)", s.delete(f"{BASE}/leads/{lid}"))
 mostrar("GET lead (status_id 3 e cliente_id?)", s.get(f"{BASE}/leads/{lid}"))
+mostrar("DELETE cliente com lead de origem (409)", s.delete(f"{BASE}/clientes/{novo_cid}"))
+mostrar("DELETE lead convertido (200)", s.delete(f"{BASE}/leads/{lid}"))
+mostrar("GET lead excluído (404)", s.get(f"{BASE}/leads/{lid}"))
+mostrar("DELETE cliente da conversão (200)", s.delete(f"{BASE}/clientes/{novo_cid}"))
 
 # ---------------------------------------------------------
 # LIMPEZA
 # ---------------------------------------------------------
 s.delete(f"{BASE}/projetos/{pid}")
-s.delete(f"{BASE}/leads/{lid}")
-s.delete(f"{BASE}/clientes/{novo_cid}")
 s.delete(f"{BASE}/clientes/{cid}")
 print("\n--- limpeza ---")
 print("Limpeza feita.")
@@ -119,5 +127,16 @@ print("   'Robo Teste' salvo?", bool(s.get(f"{BASE}/leads/pesquisar", params={"t
 # ---------------------------------------------------------
 # LOGOUT
 # ---------------------------------------------------------
+print("\n--- logout ---")
 mostrar("POST /login/logout (200)", s.post(f"{BASE}/login/logout"))
 mostrar("GET /categorias/ após logout (401)", s.get(f"{BASE}/categorias/"))
+
+# ---------------------------------------------------------
+# LIMITE DE TENTATIVAS NO LOGIN (deixe por último)
+# ---------------------------------------------------------
+print("\n--- limite de tentativas no login ---")
+for i in range(1, 7):
+    r = requests.post(f"{BASE}/login/", json={"usuario": usuario, "senha": "errada"})
+    print(f"tentativa {i}: {r.status_code}  Retry-After={r.headers.get('Retry-After')}")
+print("Esperado: 401 nas 4 primeiras e 429 da 5ª em diante (já houve 1 falha antes).")
+print("ATENÇÃO: seu IP está bloqueado por 15 min. REINICIE o app (Ctrl+C e python app.py) antes de usar o painel.")
