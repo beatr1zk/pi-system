@@ -1,0 +1,46 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block title %}Cliente | Administração{% endblock %}
+
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/leads.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/clientes.css') }}">
+{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('pagina.clientes') }}" class="link-voltar">← Voltar para clientes</a></p>
+
+<p id="aviso" role="status"></p>
+
+<section id="area-cliente" data-id="{{ id_cliente }}" hidden>
+    <p class="info-ids" id="info-ids"></p>
+
+    <div class="grade-detalhe">
+        <label>Nome <input id="c-nome" maxlength="100" required></label>
+        <label>E-mail <input type="email" id="c-email" maxlength="150" required></label>
+        <label>Telefone <input id="c-telefone" maxlength="20"></label>
+        <label>CPF <input id="c-cpf" maxlength="14" placeholder="000.000.000-00"></label>
+        <label>Status <select id="c-status"></select></label>
+        <label class="ocupa-tudo">Detalhes <textarea id="c-detalhes" rows="5" maxlength="5000"></textarea></label>
+    </div>
+
+    <div class="acoes-dialogo">
+        <button type="button" class="botao botao-secundario" id="botao-excluir">Excluir</button>
+        <button type="button" class="botao" id="botao-salvar">Salvar alterações</button>
+    </div>
+    <p id="motivo-excluir" class="info-ids"></p>
+
+    <h2 class="titulo-bloco">Lead de origem</h2>
+    <p id="origem"></p>
+
+    <h2 class="titulo-bloco">Projetos</h2>
+    <table class="tabela-admin">
+        <thead><tr><th>ID</th><th>Nome</th><th>Status</th><th>Prazo de entrega</th></tr></thead>
+        <tbody id="corpo-projetos"></tbody>
+    </table>
+</section>
+{% endblock %}
+
+{% block js_extra %}
+<script src="{{ url_for('static', filename='js/admin/cliente_detalhe.js') }}"></script>
+{% endblock %}

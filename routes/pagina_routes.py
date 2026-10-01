@@ -40,6 +40,14 @@ def leads():
 def clientes():
     return render_template("admin/clientes.html", titulo_pagina="Clientes")
 
+@pagina_bp.route("/admin/clientes/<int:id_cliente>")
+def cliente(id_cliente):
+    return render_template(
+        "admin/cliente_detalhe.html",
+        titulo_pagina="Cliente",
+        id_cliente=id_cliente,
+    )
+
 
 @pagina_bp.route("/admin/projetos")
 def projetos():

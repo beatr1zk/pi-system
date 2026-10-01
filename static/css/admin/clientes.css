@@ -1,0 +1,22 @@
+.linha-clicavel { cursor: pointer; }
+
+a.botao-linha {
+    display: inline-block;
+}
+
+.link-voltar {
+    color: var(--cor-texto-secundario);
+}
+
+.link-voltar:hover {
+    color: var(--cor-texto);
+}
+
+.titulo-bloco {
+    margin: var(--espacamento-medio) 0 var(--espacamento-pequeno);
+    font-size: 1.1rem;
+}
+
+#motivo-excluir:empty {
+    display: none;
+}
