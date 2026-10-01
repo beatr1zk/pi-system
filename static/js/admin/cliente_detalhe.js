@@ -32,8 +32,9 @@
         return iso ? new Date(iso).toLocaleString("pt-BR") : "—";
     }
 
+    // datas "AAAA-MM-DD" não passam por new Date (evita erro de fuso)
     function formatarData(iso) {
-        return iso ? new Date(iso).toLocaleDateString("pt-BR") : "";
+        return iso ? iso.slice(0, 10).split("-").reverse().join("/") : "";
     }
 
     function preencher() {
@@ -80,7 +81,7 @@
             const st = statusProjetos.find(s => s.id === p.status_id);
             corpo.append(el("tr", {},
                 el("td", { textContent: p.id }),
-                el("td", { textContent: p.nome }),
+                el("td", {}, el("a", { href: "/admin/projetos/" + p.id, textContent: p.nome })),
                 el("td", { textContent: st ? st.nome : "" }),
                 el("td", { textContent: formatarData(p.data_entrega) }),
             ));

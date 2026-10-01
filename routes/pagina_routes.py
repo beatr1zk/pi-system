@@ -53,6 +53,14 @@ def cliente(id_cliente):
 def projetos():
     return render_template("admin/projetos.html", titulo_pagina="Projetos")
 
+@pagina_bp.route("/admin/projetos/<int:id_projeto>")
+def projeto(id_projeto):
+    return render_template(
+        "admin/projeto_detalhe.html",
+        titulo_pagina="Projeto",
+        id_projeto=id_projeto,
+    )
+
 
 @pagina_bp.route("/admin/configuracoes")
 def configuracoes():

@@ -2,35 +2,47 @@
 
 {% block title %}Projetos | Administração{% endblock %}
 
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/leads.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/clientes.css') }}">
+{% endblock %}
+
 {% block content %}
-<p id="estado-conexao" role="status">Conectando...</p>
+<div class="barra-topo">
+    <input type="search" id="busca" placeholder="Pesquisar por nome, serviço ou escopo" aria-label="Pesquisar projetos">
+    <button type="button" class="botao" id="botao-novo">+ novo projeto</button>
+</div>
+
+<p id="aviso" role="status"></p>
+
+<table class="tabela-admin">
+    <thead>
+        <tr>
+            <th>ID</th><th>Nome</th><th>Cliente</th><th>Categoria</th>
+            <th>Status</th><th>Prioridade</th><th>Prazo de entrega</th><th>Detalhes</th>
+        </tr>
+    </thead>
+    <tbody id="corpo-projetos"></tbody>
+</table>
+
+<dialog id="dialogo-novo">
+    <form id="form-novo" class="form-dialogo">
+        <h2>Novo projeto</h2>
+        <label>Nome <input name="nome" maxlength="150" required></label>
+        <label>Cliente <select name="cliente_id" required></select></label>
+        <label>Categoria <select name="categoria_id" required></select></label>
+        <label>Serviço (opcional) <select name="servico"></select></label>
+        <label>Prioridade (opcional) <select name="prioridade_id"></select></label>
+        <label>Prazo de entrega (opcional) <input type="date" name="data_entrega"></label>
+        <p class="erro-dialogo" role="alert"></p>
+        <div class="acoes-dialogo">
+            <button type="button" class="botao botao-secundario" data-fechar>Cancelar</button>
+            <button type="submit" class="botao">Criar</button>
+        </div>
+    </form>
+</dialog>
 {% endblock %}
 
 {% block js_extra %}
-<script>
-(async function () {
-    const estado = document.getElementById("estado-conexao");
-    try {
-        const respostas = await Promise.all([
-            api("/projetos/"),
-            api("/clientes/"),
-            api("/categorias/"),
-            api("/status/projetos/"),
-            api("/prioridades/"),
-        ]);
-        if (respostas.some(r => r === null)) return;
-        const falhou = respostas.find(r => !r.ok);
-        if (falhou) {
-            estado.textContent = "Falha ao carregar (erro " + falhou.status + ").";
-            return;
-        }
-        const [projetos, clientes, categorias, status, prioridades] = respostas.map(r => r.dados);
-        estado.textContent = "Conexão ok: " + projetos.length + " projeto(s), " +
-            clientes.length + " cliente(s), " + categorias.length + " categoria(s), " +
-            status.length + " status, " + prioridades.length + " prioridade(s).";
-    } catch (e) {
-        estado.textContent = "Erro de conexão com o servidor.";
-    }
-})();
-</script>
+<script src="{{ url_for('static', filename='js/admin/projetos.js') }}"></script>
 {% endblock %}

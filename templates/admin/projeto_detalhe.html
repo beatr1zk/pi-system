@@ -1,0 +1,40 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block title %}Projeto | Administração{% endblock %}
+
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/leads.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/clientes.css') }}">
+{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('pagina.projetos') }}" class="link-voltar">← Voltar para projetos</a></p>
+
+<p id="aviso" role="status"></p>
+
+<section id="area-projeto" data-id="{{ id_projeto }}" hidden>
+    <p class="info-ids" id="info-ids"></p>
+
+    <div class="grade-detalhe">
+        <label>Nome <input id="p-nome" maxlength="150" required></label>
+        <label>Cliente <select id="p-cliente"></select></label>
+        <label>Categoria <select id="p-categoria"></select></label>
+        <label>Status <select id="p-status"></select></label>
+        <label>Prioridade <select id="p-prioridade"></select></label>
+        <label>Serviço <select id="p-servico"></select></label>
+        <label>Prazo de entrega <input type="date" id="p-entrega"></label>
+        <label>Data de conclusão <input type="date" id="p-conclusao"></label>
+        <label class="ocupa-tudo">URL da proposta <input id="p-url" maxlength="255" placeholder="https://..."></label>
+        <label class="ocupa-tudo">Escopo <textarea id="p-escopo" rows="6"></textarea></label>
+    </div>
+
+    <div class="acoes-dialogo">
+        <button type="button" class="botao botao-secundario" id="botao-excluir">Excluir</button>
+        <button type="button" class="botao" id="botao-salvar">Salvar alterações</button>
+    </div>
+</section>
+{% endblock %}
+
+{% block js_extra %}
+<script src="{{ url_for('static', filename='js/admin/projeto_detalhe.js') }}"></script>
+{% endblock %}
