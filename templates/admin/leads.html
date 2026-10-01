@@ -2,28 +2,58 @@
 
 {% block title %}Leads | Administração{% endblock %}
 
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/leads.css') }}">
+{% endblock %}
+
 {% block content %}
-<p id="estado-conexao" role="status">Conectando...</p>
+<div class="barra-topo">
+    <input type="search" id="busca" placeholder="Pesquisar por nome, e-mail, telefone ou serviço" aria-label="Pesquisar leads">
+    <button type="button" class="botao" id="botao-novo">+ novo lead</button>
+</div>
+
+<p id="aviso" role="status"></p>
+
+<table class="tabela-admin">
+    <thead>
+        <tr>
+            <th>ID</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Serviço</th>
+            <th>Status</th><th>Cadastro</th><th>Detalhes</th><th>Converter</th>
+        </tr>
+    </thead>
+    <tbody id="corpo-leads"></tbody>
+</table>
+
+<dialog id="dialogo-novo">
+    <form id="form-novo" class="form-dialogo">
+        <h2>Novo lead</h2>
+        <label>Nome <input name="nome" maxlength="100" required></label>
+        <label>E-mail <input type="email" name="email" maxlength="150" required></label>
+        <label>Telefone (opcional) <input name="telefone" maxlength="20"></label>
+        <label>Serviço <select name="servico" id="novo-servico" required></select></label>
+        <label>Mensagem <textarea name="mensagem" rows="4" maxlength="2000"></textarea></label>
+        <p class="erro-dialogo" role="alert"></p>
+        <div class="acoes-dialogo">
+            <button type="button" class="botao botao-secundario" data-fechar>Cancelar</button>
+            <button type="submit" class="botao">Criar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="dialogo-converter">
+    <form id="form-converter" class="form-dialogo">
+        <h2>Converter em cliente</h2>
+        <label>E-mail <input type="email" name="email" maxlength="150" required></label>
+        <label>CPF (opcional) <input name="cpf" maxlength="14" placeholder="000.000.000-00"></label>
+        <p class="erro-dialogo" role="alert"></p>
+        <div class="acoes-dialogo">
+            <button type="button" class="botao botao-secundario" data-fechar>Cancelar</button>
+            <button type="submit" class="botao">Converter</button>
+        </div>
+    </form>
+</dialog>
 {% endblock %}
 
 {% block js_extra %}
-<script>
-(async function () {
-    const estado = document.getElementById("estado-conexao");
-    try {
-        const [leads, status] = await Promise.all([
-            api("/leads/"),
-            api("/status/leads/"),
-        ]);
-        if (!leads || !status) return;
-        if (!leads.ok || !status.ok) {
-            estado.textContent = "Falha ao carregar (leads " + leads.status + ", status " + status.status + ").";
-            return;
-        }
-        estado.textContent = "Conexão ok: " + leads.dados.length + " lead(s) e " + status.dados.length + " status.";
-    } catch (e) {
-        estado.textContent = "Erro de conexão com o servidor.";
-    }
-})();
-</script>
+<script src="{{ url_for('static', filename='js/admin/leads.js') }}"></script>
 {% endblock %}

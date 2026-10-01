@@ -85,6 +85,7 @@ mostrar("Converter com e-mail (201)", r)
 novo_cid = r.json().get("cliente_id")
 
 mostrar("Converter de novo (409)", s.post(f"{BASE}/leads/{lid}/converter", json={"email": "lead@exemplo.com"}))
+mostrar("DELETE lead convertido (409)", s.delete(f"{BASE}/leads/{lid}"))
 mostrar("GET lead (status_id 3 e cliente_id?)", s.get(f"{BASE}/leads/{lid}"))
 
 # ---------------------------------------------------------

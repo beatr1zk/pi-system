@@ -91,7 +91,7 @@ def converter_lead(id_lead):
 
     dados_cliente = {
         "nome": lead.nome,
-        "email": corpo.get("email") or lead.email,  # e-mail do corpo vale se o lead não tem
+        "email": corpo.get("email") or lead.email,
         "telefone": lead.telefone,
         "cpf": corpo.get("cpf"),
         "detalhes": corpo.get("detalhes"),
