@@ -74,3 +74,19 @@
 .redes-contato a:hover {
     color: var(--cor-texto);
 }
+
+.campo-oculto {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+#retorno-contato {
+    margin: 0;
+}
+
+#retorno-contato:empty {
+    display: none;
+}

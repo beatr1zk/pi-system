@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Entrar | Admin</title>
+    <style>
+        body { font-family: system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0; background: #f4f4f4; }
+        form { display: grid; gap: 1rem; width: min(22rem, 90vw); padding: 2rem; background: #fff; border: 1px solid #ddd; }
+        label { display: grid; gap: .4rem; font-weight: 600; }
+        input { padding: .7rem; border: 1px solid #ccc; font: inherit; }
+        button { padding: .8rem; border: 0; background: #222; color: #fff; font: inherit; cursor: pointer; }
+        button:disabled { opacity: .6; }
+        #erro { margin: 0; color: #b00020; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <form id="form-login">
+        <h1>Entrar</h1>
+        <label>Usuário <input type="text" name="usuario" autocomplete="username" required></label>
+        <label>Senha <input type="password" name="senha" autocomplete="current-password" required></label>
+        <button type="submit">Entrar</button>
+        <p id="erro" role="alert"></p>
+    </form>
+
+    <script>
+        const form = document.getElementById("form-login");
+        const erro = document.getElementById("erro");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const botao = form.querySelector("button");
+            botao.disabled = true;
+            erro.textContent = "";
+            try {
+                const r = await fetch("/login/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(Object.fromEntries(new FormData(form))),
+                });
+                const d = await r.json();
+                if (r.ok) {
+                    window.location.href = "/admin/dashboard";
+                    return;
+                }
+                erro.textContent = d.erro || "Não foi possível entrar.";
+            } catch {
+                erro.textContent = "Erro de conexão.";
+            }
+            botao.disabled = false;
+        });
+    </script>
+</body>
+</html>

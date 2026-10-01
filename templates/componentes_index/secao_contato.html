@@ -5,15 +5,22 @@
         <p>Tem um projeto em mente ou procura uma designer para sua equipe? Entre em contato e vamos conversar sobre a sua ideia.</p>
     </header>
 
-    <form class="formulario-contato" action="" method="POST">
+    <form class="formulario-contato" method="POST">
         <fieldset>
             <legend>Envie uma mensagem</legend>
-            <p class="campo-formulario"><label for="nome">Nome</label><input type="text" id="nome" name="nome" autocomplete="name" required></p>
-            <p class="campo-formulario"><label for="email">E-mail</label><input type="email" id="email" name="email" autocomplete="email" required></p>
-            <p class="campo-formulario"><label for="telefone">Telefone <span>(opcional)</span></label><input type="tel" id="telefone" name="telefone" autocomplete="tel"></p>
+            <p class="campo-formulario"><label for="nome">Nome</label><input type="text" id="nome" name="nome" autocomplete="name" maxlength="100" required ></p>
+            <p class="campo-formulario"><label for="email">E-mail</label><input type="email" id="email" name="email" autocomplete="email" maxlength="150" required></p>
+            <p class="campo-formulario"><label for="telefone">Telefone <span>(opcional)</span></label><input type="tel" id="telefone" name="telefone" autocomplete="tel" maxlength="20"></p>
             <p class="campo-formulario"><label for="servico">Serviço</label><select id="servico" name="servico" required><option value="" selected disabled>Selecione um serviço</option><option value="identidade-visual">Identidade Visual</option><option value="design-grafico">Design Gráfico</option><option value="ui-ux">UI/UX</option><option value="desenvolvimento-web">Desenvolvimento Web</option><option value="outro">Outro</option></select></p>
-            <p class="campo-formulario campo-mensagem"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" rows="6" required></textarea></p>
+            <p class="campo-formulario campo-mensagem"><label for="mensagem">Mensagem</label><textarea id="mensagem" name="mensagem" rows="6" maxlength="2000" required></textarea></p>
+
+            <p class="campo-oculto" aria-hidden="true">
+                <label for="website">Não preencha este campo</label>
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </p>
+
             <button class="botao" type="submit">Enviar</button>
+            <p id="retorno-contato" role="status"></p>
         </fieldset>
     </form>
 
@@ -22,4 +29,35 @@
         <a href="https://www.linkedin.com/in/beatriz-kava" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="mailto:beatriz.kava.info@gmail.com">E-mail</a>
     </nav>
+
+    <script>
+        (function () {
+            const form = document.querySelector(".formulario-contato");
+            const retorno = document.getElementById("retorno-contato");
+
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const botao = form.querySelector("button[type=submit]");
+                botao.disabled = true;
+                retorno.textContent = "Enviando...";
+
+                try {
+                    const resposta = await fetch("/contato/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+                    });
+                    const dados = await resposta.json();
+                    retorno.textContent = resposta.ok
+                        ? dados.mensagem
+                        : (dados.erro || "Não foi possível enviar.");
+                    if (resposta.ok) form.reset();
+                } catch (erro) {
+                    retorno.textContent = "Erro de conexão. Tente novamente.";
+                } finally {
+                    botao.disabled = false;
+                }
+            });
+        })();
+    </script>
 </section>

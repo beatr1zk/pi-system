@@ -1,7 +1,36 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin/admin_base.html' %}
 
 {% block title %}Projetos | Administração{% endblock %}
 
 {% block content %}
-<h1>Projetos</h1>
+<p id="estado-conexao" role="status">Conectando...</p>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+(async function () {
+    const estado = document.getElementById("estado-conexao");
+    try {
+        const respostas = await Promise.all([
+            api("/projetos/"),
+            api("/clientes/"),
+            api("/categorias/"),
+            api("/status/projetos/"),
+            api("/prioridades/"),
+        ]);
+        if (respostas.some(r => r === null)) return;
+        const falhou = respostas.find(r => !r.ok);
+        if (falhou) {
+            estado.textContent = "Falha ao carregar (erro " + falhou.status + ").";
+            return;
+        }
+        const [projetos, clientes, categorias, status, prioridades] = respostas.map(r => r.dados);
+        estado.textContent = "Conexão ok: " + projetos.length + " projeto(s), " +
+            clientes.length + " cliente(s), " + categorias.length + " categoria(s), " +
+            status.length + " status, " + prioridades.length + " prioridade(s).";
+    } catch (e) {
+        estado.textContent = "Erro de conexão com o servidor.";
+    }
+})();
+</script>
 {% endblock %}

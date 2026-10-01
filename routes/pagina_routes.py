@@ -1,7 +1,24 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, session, request
 
 
 pagina_bp = Blueprint("pagina", __name__)
+
+
+@pagina_bp.before_request
+def exigir_login():
+    """Páginas do admin: sem sessão, redireciona para a tela de login."""
+    if request.endpoint == "pagina.login":
+        return None
+    if "id_admin" not in session:
+        return redirect(url_for("pagina.login"))
+    return None
+
+
+@pagina_bp.route("/admin/login")
+def login():
+    if "id_admin" in session:
+        return redirect(url_for("pagina.dashboard"))
+    return render_template("admin/login.html")
 
 
 @pagina_bp.route("/admin")
@@ -11,49 +28,24 @@ def admin():
 
 @pagina_bp.route("/admin/dashboard")
 def dashboard():
-    return render_template("admin/dashboard.html")
+    return render_template("admin/dashboard.html", titulo_pagina="Dashboard")
 
 
 @pagina_bp.route("/admin/leads")
 def leads():
-    return render_template("admin/leads.html")
+    return render_template("admin/leads.html", titulo_pagina="Leads")
 
 
 @pagina_bp.route("/admin/clientes")
 def clientes():
-    return render_template("admin/clientes.html")
+    return render_template("admin/clientes.html", titulo_pagina="Clientes")
 
 
 @pagina_bp.route("/admin/projetos")
 def projetos():
-    return render_template("admin/projetos.html")
+    return render_template("admin/projetos.html", titulo_pagina="Projetos")
 
 
 @pagina_bp.route("/admin/configuracoes")
 def configuracoes():
-    return render_template("admin/configuracoes.html")
-
-
-@pagina_bp.route("/admin/configuracoes/prioridades")
-def prioridades():
-    return render_template("admin/configuracoes/prioridades.html")
-
-
-@pagina_bp.route("/admin/configuracoes/categorias")
-def categorias():
-    return render_template("admin/configuracoes/categorias.html")
-
-
-@pagina_bp.route("/admin/configuracoes/status-projetos")
-def status_projetos():
-    return render_template("admin/configuracoes/status_projetos.html")
-
-
-@pagina_bp.route("/admin/configuracoes/status-clientes")
-def status_clientes():
-    return render_template("admin/configuracoes/status_clientes.html")
-
-
-@pagina_bp.route("/admin/configuracoes/status-leads")
-def status_leads():
-    return render_template("admin/configuracoes/status_leads.html")
+    return render_template("admin/configuracoes.html", titulo_pagina="Configurações")

@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
     <title>{% block title %}Administração{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
-</head>
-<body>
-    {% include 'componentes_admin/cabecalho_admin.html' %}
-    {% include 'componentes_admin/menu_lateral.html' %}
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
+    {% block css_extra %}{% endblock %}
+</head>
+
+<body>
+    <div class="layout-admin">
+        {% include 'componentes_admin/menu_lateral.html' %}
+
+        <div class="area-principal">
+            {% include 'componentes_admin/cabecalho_admin.html' %}
+
+            <main class="conteudo-admin">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin/api.js') }}"></script>
+    {% block js_extra %}{% endblock %}
 </body>
+
 </html>

@@ -1,7 +1,29 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin/admin_base.html' %}
 
 {% block title %}Leads | Administração{% endblock %}
 
 {% block content %}
-<h1>Leads</h1>
+<p id="estado-conexao" role="status">Conectando...</p>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+(async function () {
+    const estado = document.getElementById("estado-conexao");
+    try {
+        const [leads, status] = await Promise.all([
+            api("/leads/"),
+            api("/status/leads/"),
+        ]);
+        if (!leads || !status) return;
+        if (!leads.ok || !status.ok) {
+            estado.textContent = "Falha ao carregar (leads " + leads.status + ", status " + status.status + ").";
+            return;
+        }
+        estado.textContent = "Conexão ok: " + leads.dados.length + " lead(s) e " + status.dados.length + " status.";
+    } catch (e) {
+        estado.textContent = "Erro de conexão com o servidor.";
+    }
+})();
+</script>
 {% endblock %}

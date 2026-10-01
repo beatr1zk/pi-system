@@ -1,1 +1,132 @@
-/* Estilos da área administrativa. */
+/* =========================================
+   LAYOUT
+   ========================================= */
+
+.layout-admin {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.area-principal {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.conteudo-admin {
+    flex: 1;
+    padding: var(--espacamento-medio);
+}
+
+
+/* =========================================
+   MENU LATERAL
+   ========================================= */
+
+.menu-lateral {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    padding: var(--espacamento-medio) 0;
+    border-right: 1px solid var(--cor-borda);
+    background-color: var(--cor-superficie);
+}
+
+.menu-lateral ul {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.menu-lateral a {
+    display: block;
+    padding: 0.75rem var(--espacamento-medio);
+    color: var(--cor-texto-secundario);
+}
+
+.menu-lateral a:hover,
+.menu-lateral a[aria-current="page"] {
+    color: var(--cor-texto);
+}
+
+.menu-lateral a[aria-current="page"] {
+    border-left: 3px solid var(--cor-destaque);
+    font-weight: 600;
+}
+
+.botao-sair {
+    margin: 0 var(--espacamento-medio);
+    min-height: 2.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--cor-destaque);
+    border-radius: var(--raio-borda);
+    background-color: transparent;
+    color: var(--cor-destaque);
+    cursor: pointer;
+}
+
+.botao-sair:hover {
+    background-color: var(--cor-destaque);
+    color: var(--cor-destaque-texto);
+}
+
+.botao-sair:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+
+.cabecalho-administrativo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espacamento-medio);
+    padding: 1.25rem var(--espacamento-medio);
+    border-bottom: 1px solid var(--cor-borda);
+    background-color: var(--cor-superficie);
+}
+
+.titulo-pagina {
+    font-size: 1.25rem;
+}
+
+.acoes-cabecalho {
+    display: flex;
+    gap: var(--espacamento-pequeno);
+}
+
+.botao-tema {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    background-color: transparent;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+
+/* =========================================
+   RESPONSIVO
+   ========================================= */
+
+@media (max-width: 768px) {
+    .layout-admin {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-lateral {
+        position: static;
+        height: auto;
+        gap: var(--espacamento-medio);
+        border-right: 0;
+        border-bottom: 1px solid var(--cor-borda);
+    }
+}

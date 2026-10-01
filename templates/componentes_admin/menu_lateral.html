@@ -1,11 +1,27 @@
 <aside class="menu-lateral">
     <nav aria-label="Menu administrativo">
         <ul>
-            <li><a href="{{ url_for('pagina.admin') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('pagina.leads') }}">Leads</a></li>
-            <li><a href="{{ url_for('pagina.clientes') }}">Clientes</a></li>
-            <li><a href="{{ url_for('pagina.projetos') }}">Projetos</a></li>
-            <li><a href="{{ url_for('pagina.configuracoes') }}">Configurações</a></li>
+            <li><a href="{{ url_for('pagina.admin') }}" {% if request.path == '/admin/dashboard' %}aria-current="page"{% endif %}>Dashboard</a></li>
+            <li><a href="{{ url_for('pagina.leads') }}" {% if request.path == '/admin/leads' %}aria-current="page"{% endif %}>Leads</a></li>
+            <li><a href="{{ url_for('pagina.clientes') }}" {% if request.path == '/admin/clientes' %}aria-current="page"{% endif %}>Clientes</a></li>
+            <li><a href="{{ url_for('pagina.projetos') }}" {% if request.path == '/admin/projetos' %}aria-current="page"{% endif %}>Projetos</a></li>
+            <li><a href="{{ url_for('pagina.configuracoes') }}" {% if request.path.startswith('/admin/configuracoes') %}aria-current="page"{% endif %}>Configurações</a></li>
         </ul>
     </nav>
+
+    <button type="button" class="botao-sair" id="botao-sair">Sair</button>
+
+    <script>
+        (function () {
+            const botao = document.getElementById("botao-sair");
+            botao.addEventListener("click", async function () {
+                botao.disabled = true;
+                try {
+                    await fetch("/login/logout", { method: "POST" });
+                } finally {
+                    window.location.href = "{{ url_for('index') }}";
+                }
+            });
+        })();
+    </script>
 </aside>

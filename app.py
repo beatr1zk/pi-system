@@ -10,6 +10,7 @@ from mysql.connector import IntegrityError, DataError
 from routes.prioridade_routes import prioridade_bp
 from routes.categoria_routes import categoria_bp
 from routes.cliente_routes import cliente_bp
+from routes.contato_routes import contato_bp
 from routes.projeto_routes import projeto_bp
 from routes.pagina_routes import pagina_bp
 from routes.status_routes import status_bp
@@ -31,6 +32,9 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.getenv("FLASK_ENV") == "production"
 app.permanent_session_lifetime = timedelta(hours=2)
+
+# Corpo de requisição com no máximo 16 KB (protege o formulário público)
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
 
 
 @app.route("/")
@@ -60,12 +64,17 @@ def erro_dados(e):
     return jsonify({"erro": "Dados inválidos."}), 400
 
 
+@app.errorhandler(413)
+def erro_tamanho(e):
+    return jsonify({"erro": "Requisição grande demais."}), 413
+
+
 @app.errorhandler(500)
 def erro_interno(e):
     return jsonify({"erro": "Erro interno."}), 500
 
 
-for bp in (prioridade_bp, categoria_bp, cliente_bp, projeto_bp,
+for bp in (prioridade_bp, categoria_bp, cliente_bp, contato_bp, projeto_bp,
            status_bp, pagina_bp, login_bp, lead_bp):
     app.register_blueprint(bp)
 

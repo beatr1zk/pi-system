@@ -1,7 +1,133 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin/admin_base.html' %}
 
 {% block title %}Configurações | Administração{% endblock %}
 
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/configuracoes.css') }}">
+{% endblock %}
+
 {% block content %}
-<h1>Configurações</h1>
+<section class="configuracoes" aria-label="Configurações">
+    <div class="abas" role="tablist" aria-label="Tipo de cadastro">
+        <button type="button" class="aba" role="tab" data-url="/categorias/" data-rotulo="categoria" aria-selected="true">Categorias</button>
+        <button type="button" class="aba" role="tab" data-url="/prioridades/" data-rotulo="prioridade" aria-selected="false">Prioridades</button>
+        <button type="button" class="aba" role="tab" data-url="/status/projetos/" data-rotulo="status de projeto" aria-selected="false">Status de projetos</button>
+        <button type="button" class="aba" role="tab" data-url="/status/clientes/" data-rotulo="status de cliente" aria-selected="false">Status de clientes</button>
+        <button type="button" class="aba" role="tab" data-url="/status/leads/" data-rotulo="status de lead" aria-selected="false">Status de leads</button>
+    </div>
+
+    <form id="form-novo" class="form-novo">
+        <label for="novo-nome" id="rotulo-novo">Novo item</label>
+        <input type="text" id="novo-nome" maxlength="50" required autocomplete="off">
+        <button type="submit" class="botao">Adicionar</button>
+    </form>
+
+    <p id="mensagem" role="status"></p>
+
+    <table class="tabela-config">
+        <thead>
+            <tr><th>Nome</th><th class="coluna-acoes">Ações</th></tr>
+        </thead>
+        <tbody id="corpo-tabela"></tbody>
+    </table>
+</section>
+
+<script>
+(function () {
+    const abas = document.querySelectorAll(".aba");
+    const corpo = document.getElementById("corpo-tabela");
+    const mensagem = document.getElementById("mensagem");
+    const form = document.getElementById("form-novo");
+    const campoNovo = document.getElementById("novo-nome");
+    const rotuloNovo = document.getElementById("rotulo-novo");
+    let atual = abas[0];
+
+    function aviso(texto) { mensagem.textContent = texto || ""; }
+
+    async function chamar(url, metodo, corpoJson) {
+        const opcoes = { method: metodo, headers: {} };
+        if (corpoJson) {
+            opcoes.headers["Content-Type"] = "application/json";
+            opcoes.body = JSON.stringify(corpoJson);
+        }
+        const r = await fetch(url, opcoes);
+        if (r.status === 401) { window.location.href = "/admin/login"; return null; }
+        const dados = await r.json().catch(() => ({}));
+        return { ok: r.ok, dados: dados };
+    }
+
+    function linha(item) {
+        const tr = document.createElement("tr");
+
+        const tdNome = document.createElement("td");
+        tdNome.textContent = item.nome;
+
+        const tdAcoes = document.createElement("td");
+        tdAcoes.className = "coluna-acoes";
+
+        const editar = document.createElement("button");
+        editar.type = "button";
+        editar.className = "botao-linha";
+        editar.textContent = "Renomear";
+        editar.addEventListener("click", () => renomear(item));
+
+        const excluir = document.createElement("button");
+        excluir.type = "button";
+        excluir.className = "botao-linha";
+        excluir.textContent = "Excluir";
+        excluir.addEventListener("click", () => remover(item));
+
+        tdAcoes.append(editar, excluir);
+        tr.append(tdNome, tdAcoes);
+        return tr;
+    }
+
+    async function carregar() {
+        aviso("");
+        corpo.replaceChildren();
+        const res = await chamar(atual.dataset.url, "GET");
+        if (!res) return;
+        if (!res.ok) { aviso(res.dados.erro || "Não foi possível carregar."); return; }
+        res.dados.forEach(item => corpo.appendChild(linha(item)));
+        if (res.dados.length === 0) aviso("Nenhum item cadastrado.");
+    }
+
+    async function renomear(item) {
+        const novo = window.prompt("Novo nome:", item.nome);
+        if (novo === null || !novo.trim()) return;
+        const res = await chamar(atual.dataset.url + item.id, "PUT", { nome: novo.trim() });
+        if (!res) return;
+        aviso(res.ok ? "Nome atualizado." : (res.dados.erro || "Não foi possível renomear."));
+        if (res.ok) carregar();
+    }
+
+    async function remover(item) {
+        if (!window.confirm('Excluir "' + item.nome + '"?')) return;
+        const res = await chamar(atual.dataset.url + item.id, "DELETE");
+        if (!res) return;
+        aviso(res.ok ? "Item excluído." : (res.dados.erro || "Não foi possível excluir."));
+        if (res.ok) carregar();
+    }
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const nome = campoNovo.value.trim();
+        if (!nome) return;
+        const res = await chamar(atual.dataset.url, "POST", { nome: nome });
+        if (!res) return;
+        aviso(res.ok ? "Item adicionado." : (res.dados.erro || "Não foi possível adicionar."));
+        if (res.ok) { campoNovo.value = ""; carregar(); }
+    });
+
+    function selecionar(aba) {
+        abas.forEach(a => a.setAttribute("aria-selected", a === aba ? "true" : "false"));
+        atual = aba;
+        rotuloNovo.textContent = "Novo " + aba.dataset.rotulo;
+        carregar();
+    }
+
+    abas.forEach(aba => aba.addEventListener("click", () => selecionar(aba)));
+    selecionar(abas[0]);
+})();
+</script>
 {% endblock %}

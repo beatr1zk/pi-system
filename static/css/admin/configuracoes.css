@@ -1,0 +1,85 @@
+.configuracoes {
+    display: grid;
+    gap: var(--espacamento-medio);
+    max-width: 48rem;
+}
+
+.abas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.aba {
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background-color: transparent;
+    color: var(--cor-texto-secundario);
+    cursor: pointer;
+}
+
+.aba[aria-selected="true"] {
+    border-bottom-color: var(--cor-destaque);
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+.form-novo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espacamento-pequeno);
+}
+
+.form-novo label {
+    font-weight: 600;
+}
+
+.form-novo input {
+    flex: 1;
+    min-width: 12rem;
+    padding: 0.75rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-superficie);
+    color: var(--cor-texto);
+}
+
+#mensagem:empty {
+    display: none;
+}
+
+.tabela-config {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--cor-superficie);
+}
+
+.tabela-config th,
+.tabela-config td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--cor-borda);
+    text-align: left;
+}
+
+.coluna-acoes {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.botao-linha {
+    margin-left: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    background-color: transparent;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+.botao-linha:hover {
+    border-color: var(--cor-destaque);
+}
