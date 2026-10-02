@@ -103,7 +103,7 @@
 }
 
 .acoes-cabecalho {
-    display: flex;
+    display: none; /*alterar depois para flex*/
     gap: var(--espacamento-pequeno);
 }
 
