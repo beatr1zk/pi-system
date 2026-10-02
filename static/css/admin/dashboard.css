@@ -1,0 +1,40 @@
+.cartoes-resumo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: var(--espacamento-medio);
+    padding-top: var(--espacamento-medio);
+}
+
+.cartao-resumo {
+    display: grid;
+    gap: 0.25rem;
+    width: 11rem;
+    padding: var(--espacamento-medio);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    background-color: var(--cor-superficie);
+}
+
+.cartao-resumo:hover {
+    border-color: var(--cor-destaque);
+}
+
+.cartao-numero {
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.cartao-rotulo {
+    color: var(--cor-texto-secundario);
+}
+
+#aviso-dashboard {
+    margin-bottom: var(--espacamento-pequeno);
+}
+
+#aviso-dashboard:empty {
+    display: none;
+}

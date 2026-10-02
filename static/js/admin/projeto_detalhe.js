@@ -62,6 +62,10 @@
     document.getElementById("botao-salvar").addEventListener("click", async () => {
         if (!f.nome.value.trim()) { mostrarAviso("O nome é obrigatório."); return; }
 
+        // só pergunta quando o prazo foi alterado
+        const entregaAtual = projeto.data_entrega ? projeto.data_entrega.slice(0, 10) : "";
+        if (f.entrega.value !== entregaAtual && !confirmarDataPassada(f.entrega.value)) return;
+
         const statusNome = (statusLista.find(s => s.id === Number(f.status.value)) || {}).nome;
         if (statusNome === "Concluído" && !f.conclusao.value) {
             if (!window.confirm("O projeto está como Concluído, mas sem data de conclusão. Salvar assim mesmo?")) return;

@@ -19,6 +19,11 @@
     padding: var(--espacamento-medio);
 }
 
+.conteudo-admin > section {
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
 
 /* =========================================
    MENU LATERAL

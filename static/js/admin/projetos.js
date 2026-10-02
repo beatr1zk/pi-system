@@ -148,6 +148,7 @@
     formNovo.addEventListener("submit", async e => {
         e.preventDefault();
         const f = formNovo.elements;
+        if (!confirmarDataPassada(f.data_entrega.value)) return;
         const corpoReq = {
             nome: f.nome.value,
             cliente_id: Number(f.cliente_id.value),

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # antes de qualquer import do projeto
+load_dotenv()
 
 from datetime import timedelta
 from flask import Flask, render_template, jsonify
@@ -31,7 +31,7 @@ app.secret_key = secret
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.getenv("FLASK_ENV") == "production"
-app.permanent_session_lifetime = timedelta(hours=2)
+app.permanent_session_lifetime = timedelta(minutes=20)
 
 # Corpo de requisição com no máximo 16 KB (protege o formulário público)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
@@ -78,7 +78,7 @@ for bp in (prioridade_bp, categoria_bp, cliente_bp, contato_bp, projeto_bp,
            status_bp, pagina_bp, login_bp, lead_bp):
     app.register_blueprint(bp)
 
-inicializar_banco()  # roda também com flask run / gunicorn
+inicializar_banco() 
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_DEBUG") == "1")

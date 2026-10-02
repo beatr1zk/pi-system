@@ -2,5 +2,25 @@
 
 {% block title %}Dashboard | Administração{% endblock %}
 
+{% block css_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
+{% endblock %}
+
 {% block content %}
+<p id="aviso-dashboard" role="status"></p>
+
+<section class="cartoes-resumo" aria-label="Resumo">
+    <a class="cartao-resumo" href="{{ url_for('pagina.leads') }}">
+        <span class="cartao-numero" id="num-leads">—</span>
+        <span class="cartao-rotulo">leads ativos</span>
+    </a>
+    <a class="cartao-resumo" href="{{ url_for('pagina.clientes') }}">
+        <span class="cartao-numero" id="num-clientes">—</span>
+        <span class="cartao-rotulo">clientes ativos</span>
+    </a>
+</section>
+{% endblock %}
+
+{% block js_extra %}
+<script src="{{ url_for('static', filename='js/admin/dashboard.js') }}"></script>
 {% endblock %}
