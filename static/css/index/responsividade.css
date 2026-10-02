@@ -2,6 +2,12 @@
    RESPONSIVIDADE
    ========================================= */
 
+@media (max-width: 1024px) {
+    .rodape {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .cabecalho {
         grid-template-columns: 1fr auto;
@@ -60,10 +66,6 @@
 
     .lista-experiencias {
         grid-template-columns: 1fr;
-    }
-
-    .rodape {
-        grid-template-columns: repeat(2, 1fr);
     }
 
     .projeto-destaque {
@@ -145,6 +147,20 @@
 
     .projeto-quinto {
         grid-row: 5;
+    }
+
+    .formulario-contato fieldset {
+        min-width: 0;
+    }
+
+    .redes-contato a,
+    .links-rodape a,
+    .coluna-rodape address a {
+        padding: 0.5rem 0;
+    }
+
+    .links-rodape a {
+        display: inline-block;
     }
 
     .rodape {
