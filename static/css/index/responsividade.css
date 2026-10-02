@@ -2,21 +2,57 @@
    RESPONSIVIDADE
    ========================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+    .rodape {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
     .cabecalho {
         grid-template-columns: 1fr auto;
+        gap: 0 var(--espacamento-medio);
     }
 
-    .navegacao {
+    .cabecalho.menu-aberto {
+        padding-bottom: var(--espacamento-medio);
+    }
+
+    .botao-menu {
+        display: flex;
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .navegacao,
+    .cabecalho .botao-contato {
+        display: none;
         grid-column: 1 / -1;
-        grid-row: 2;
         justify-self: stretch;
     }
 
-    .cabecalho .botao-contato {
-        justify-self: end;
+    .cabecalho.menu-aberto .navegacao {
+        display: block;
     }
 
+    .cabecalho.menu-aberto .botao-contato {
+        display: inline-flex;
+    }
+
+    .lista-navegacao {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        margin-bottom: var(--espacamento-pequeno);
+    }
+
+    .lista-navegacao a {
+        display: block;
+        padding: 0.75rem 0;
+    }
+}
+
+@media (max-width: 900px) {
     .apresentacao,
     .secao-contato {
         grid-template-columns: 1fr;
@@ -30,15 +66,6 @@
 
     .lista-experiencias {
         grid-template-columns: 1fr;
-    }
-
-    .rodape {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .grade-projetos {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 18rem 12rem 12rem;
     }
 
     .projeto-destaque {
@@ -73,16 +100,7 @@
     }
 
     .cabecalho {
-        width: min(calc(100% - 2rem), var(--largura-conteudo));
-    }
-
-    .cabecalho .botao-contato {
-        display: none;
-    }
-
-    .lista-navegacao {
-        gap: 0.75rem 1rem;
-        font-size: 0.9rem;
+        padding-inline: 1rem;
     }
 
     .acoes-hero {
@@ -101,11 +119,6 @@
     .foto-perfil,
     .foto-perfil img {
         min-height: 18rem;
-    }
-
-    .grade-projetos {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(5, 16rem);
     }
 
     .projeto-destaque,
@@ -136,6 +149,20 @@
         grid-row: 5;
     }
 
+    .formulario-contato fieldset {
+        min-width: 0;
+    }
+
+    .redes-contato a,
+    .links-rodape a,
+    .coluna-rodape address a {
+        padding: 0.5rem 0;
+    }
+
+    .links-rodape a {
+        display: inline-block;
+    }
+
     .rodape {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -144,5 +171,27 @@
 
     .direitos-autorais {
         grid-column: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .grade-imagens-projeto {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: calc((100cqw - 0.75rem) / 2 * 0.8);
+    }
+
+    .projeto:nth-child(n) .imagem-projeto:nth-child(n) {
+        --c: 1;
+        --r: 1;
+    }
+
+    .projeto:nth-child(n) .imagem-projeto:nth-child(5n+1) {
+        --c: 2;
+        --r: 2;
+    }
+
+    .projeto:nth-child(n) .imagem-projeto:nth-child(5n+4),
+    .projeto:nth-child(n) .imagem-projeto:nth-child(5n+5) {
+        --c: 2;
     }
 }

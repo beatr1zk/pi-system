@@ -3,7 +3,7 @@
         <img class="logo" src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo de Beatriz Kava">
     </a>
 
-    <nav class="navegacao" aria-label="Navegação principal">
+    <nav class="navegacao" id="navegacao" aria-label="Navegação principal">
         <ul class="lista-navegacao">
             <li><a href="#inicio">Home</a></li> 
             <li><a href="#sobre">Quem sou</a></li>
@@ -13,4 +13,35 @@
     </nav>
 
     <a class="botao botao-contato" href="#contato">Vamos conversar</a>
-</header>  
+
+    <button class="botao-menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navegacao">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</header>
+
+<script>
+    (function () {
+        var cabecalho = document.querySelector('.cabecalho');
+        var botao = cabecalho.querySelector('.botao-menu');
+
+        function alternar(aberto) {
+            cabecalho.classList.toggle('menu-aberto', aberto);
+            botao.setAttribute('aria-expanded', aberto);
+            botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+        }
+
+        botao.addEventListener('click', function () {
+            alternar(!cabecalho.classList.contains('menu-aberto'));
+        });
+
+        cabecalho.querySelectorAll('.navegacao a, .botao-contato').forEach(function (link) {
+            link.addEventListener('click', function () { alternar(false); });
+        });
+
+        document.addEventListener('keydown', function (evento) {
+            if (evento.key === 'Escape') alternar(false);
+        });
+    })();
+</script>
