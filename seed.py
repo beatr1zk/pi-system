@@ -2,7 +2,9 @@ from dotenv import load_dotenv
 
 load_dotenv()  
 
+import os
 import getpass
+import mysql.connector
 from mysql.connector import IntegrityError
 
 from banco.db import conectar
@@ -23,6 +25,31 @@ DADOS = {
     "prioridades_projeto": ["Baixa", "Média", "Alta"],
     "categorias": ["Beleza", "Moda", "Tecnologia"],  
 }
+
+
+def criar_banco():
+    nome_banco = os.getenv("DB_NAME")
+
+    if not nome_banco:
+        raise ValueError("DB_NAME não foi definido no arquivo .env.")
+
+    if not nome_banco.replace("_", "").isalnum():
+        raise ValueError("Nome do banco de dados inválido.")
+
+    conexao = mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+    )
+    cursor = conexao.cursor()
+
+    try:
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{nome_banco}`")
+        conexao.commit()
+        print(f"Banco '{nome_banco}' verificado/criado.")
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 def criar_tabelas():
@@ -85,6 +112,7 @@ def criar_admin_inicial():
 
 
 if __name__ == "__main__":
+    criar_banco()
     criar_tabelas()
     for tabela, nomes in DADOS.items():
         popular_tabela(tabela, nomes)
